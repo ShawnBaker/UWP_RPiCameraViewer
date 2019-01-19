@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="RPiCameraViewer.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RPiCameraViewer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<CommandBar Grid.Row="0" Grid.ColumnSpan="2" OverflowButtonVisibility="Collapsed">
+			<CommandBar.Content>
+				<TextBlock x:Uid="SettingsPage" Margin="16,8,0,0" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center"/>
+			</CommandBar.Content>
+			<AppBarButton Icon="Accept" Click="HandleSaveButtonClick" />
+			<AppBarButton Icon="Cancel" Click="HandleCancelButtonClick" />
+		</CommandBar>
+		<TextBlock Grid.Row="1" Grid.Column="0" x:Uid="CameraName" Margin="16,16,0,0" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<TextBox x:Name="nameTextBox" Grid.Row="1" Grid.Column="1" Margin="20,20,0,0" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<TextBlock Grid.Row="2" Grid.Column="0" x:Uid="ScanTimeout" Margin="16,0,0,0" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<TextBox x:Name="timeoutTextBox" Grid.Row="2" Grid.Column="1" Margin="20,4,0,0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<TextBlock Grid.Row="3" Grid.Column="0" x:Uid="Port" Margin="16,0,0,0" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<TextBox x:Name="portTextBox" Grid.Row="3" Grid.Column="1" Margin="20,4,0,0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<TextBlock Grid.Row="4" Grid.Column="0" x:Uid="ShowAllNetworks" Margin="16,0,0,0" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<ToggleSwitch x:Name="showAllNetworksToggle" Grid.Row="4" Grid.Column="1" Margin="20,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+	</Grid>
+</Page>
