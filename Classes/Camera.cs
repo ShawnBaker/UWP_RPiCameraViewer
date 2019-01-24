@@ -1,5 +1,7 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace RPiCameraViewer
 {
@@ -66,6 +68,24 @@ namespace RPiCameraViewer
 				}
 			}
 			return null;
+		}
+
+		public void SortByName()
+		{
+			List<Camera> sorted = Items.OrderBy(x => x.Name).ToList();
+			for (int i = 0; i < sorted.Count; i++)
+			{
+				Move(IndexOf(sorted[i]), i);
+			}
+		}
+
+		public void SortByAddress()
+		{
+			List<Camera> sorted = Items.OrderBy(x => x.Address).ToList();
+			for (int i = 0; i < sorted.Count; i++)
+			{
+				Move(IndexOf(sorted[i]), i);
+			}
 		}
 	}
 }

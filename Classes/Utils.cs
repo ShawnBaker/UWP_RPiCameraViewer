@@ -1,15 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Windows.Networking;
 using Windows.Networking.Connectivity;
+using Windows.UI;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 
 namespace RPiCameraViewer
 {
     public static class Utils
     {
 		// public properties
+		public static Color PrimaryColor = Color.FromArgb(255, 195, 30, 30);
+		public static Color TextColor = Colors.White;
+		public static Color GoodColor = Color.FromArgb(255, 0, 192, 0);
+		public static Color BadColor = Colors.Red;
 		public static string IpAddressRegexString = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
 		public static string HostnameRegexString = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
 		public static Regex IpAddressRegex = new Regex(IpAddressRegexString);
@@ -64,8 +72,15 @@ namespace RPiCameraViewer
 		public static string GetBaseIpAddress()
 		{
 			string ipAddress = GetLocalIpAddress();
-			int i = ipAddress.LastIndexOf('.');
-			return ipAddress.Substring(0, i + 1);
+			if (!string.IsNullOrEmpty(ipAddress))
+			{
+				int i = ipAddress.LastIndexOf('.');
+				if (i != -1)
+				{
+					return ipAddress.Substring(0, i + 1);
+				}
+			}
+			return "";
 		}
 
 		/// <summary>
@@ -125,13 +140,42 @@ namespace RPiCameraViewer
 		}
 
 		/// <summary>
+		/// Gets the list of cameras for a network.
+		/// </summary>
+		/// <param name="network">Network to get cameras for.</param>
+		/// <param name="includeHostnames">True to include hostanem cameras, false not to.</param>
+		/// <returns>List of network cameras.</returns>
+		public static Cameras GetNetworkCameras(string network, bool includeHostnames)
+		{
+			Settings settings = new Settings();
+
+			// find the cameras for the network
+			Cameras networkCameras = new Cameras();
+			foreach (Camera camera in settings.Cameras)
+			{
+				bool isIp = Utils.IsIpAddress(camera.Address);
+				if ((isIp && (camera.Network == network)) || (!isIp && includeHostnames))
+				{
+					networkCameras.Add(camera);
+				}
+			}
+
+			return networkCameras;
+		}
+
+		/// <summary>
 		/// Displays a popup error message asynchronously.
 		/// </summary>
 		/// <param name="message">Error message to be displayed.</param>
-		public static void Error(string message)
+		public static async void ErrorAsync(string message)
 		{
-			MessageDialog md = new MessageDialog(message, Res.Str.Error);
-			md.ShowAsync();
+			ContentDialog cd = new ContentDialog()
+			{
+				Title = Res.Str.Error,
+				Content = message,
+				CloseButtonText = Res.Str.OK
+			};
+			await cd.ShowAsync();
 		}
 
 		/// <summary>
@@ -140,20 +184,25 @@ namespace RPiCameraViewer
 		/// <param name="message">Prompt to be displayed.</param>
 		/// <param name="yesHandler">Method to be called when Yes is pressed.</param>
 		/// <param name="noHandler">Method to be called when No is pressed.</param>
-		public static void YesNo(string message, UICommandInvokedHandler yesHandler, UICommandInvokedHandler noHandler = null)
+		public static async void YesNoAsync(string message, UICommandInvokedHandler yesHandler, UICommandInvokedHandler noHandler = null)
 		{
-			MessageDialog md = new MessageDialog(message, Res.Str.AppName);
-			md.Commands.Add(new UICommand(Res.Str.Yes, yesHandler ?? YesNoNullHandler));
-			md.Commands.Add(new UICommand(Res.Str.No, noHandler ?? YesNoNullHandler));
-			md.ShowAsync();
-		}
-
-		/// <summary>
-		/// Empty button press handler for the YesNo method.
-		/// </summary>
-		/// <param name="command"></param>
-		private static void YesNoNullHandler(IUICommand command)
-		{
+			ContentDialog cd = new ContentDialog()
+			{
+				Title = Res.Str.AppName,
+				Content = message,
+				IsPrimaryButtonEnabled = true,
+				PrimaryButtonText = Res.Str.Yes,
+				CloseButtonText = Res.Str.No
+			};
+			ContentDialogResult result = await cd.ShowAsync();
+			if (result == ContentDialogResult.Primary)
+			{
+				yesHandler?.Invoke(new UICommand(Res.Str.Yes));
+			}
+			else
+			{
+				noHandler?.Invoke(new UICommand(Res.Str.No));
+			}
 		}
 	}
 }

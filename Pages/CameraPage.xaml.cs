@@ -66,7 +66,7 @@ namespace RPiCameraViewer
 			string name = nameTextBox.Text.Trim();
 			if (name.Length == 0)
 			{
-				Utils.Error(Res.Error.NoCameraName);
+				Utils.ErrorAsync(Res.Error.NoCameraName);
 				return;
 			}
 
@@ -76,7 +76,7 @@ namespace RPiCameraViewer
 			// make sure the name doesn't already exist
 			if ((newCamera || name != camera.Name) && (existingCamera != null))
 			{
-				Utils.Error(Res.Error.NameAlreadyExists);
+				Utils.ErrorAsync(Res.Error.NameAlreadyExists);
 				return;
 			}
 
@@ -84,14 +84,14 @@ namespace RPiCameraViewer
 			string address = addressTextBox.Text.Trim();
 			if (string.IsNullOrEmpty(address))
 			{
-				Utils.Error(Res.Error.NoAddress);
+				Utils.ErrorAsync(Res.Error.NoAddress);
 				return;
 			}
 
 			// check the address
 			if (!Utils.IsIpAddress(address) && !Utils.IsHostname(address))
 			{
-				Utils.Error(Res.Error.BadAddress);
+				Utils.ErrorAsync(Res.Error.BadAddress);
 				return;
 			}
 
@@ -107,7 +107,7 @@ namespace RPiCameraViewer
 			}
 			if (port < Settings.MIN_PORT || port > Settings.MAX_PORT)
 			{
-				Utils.Error(string.Format(Res.Error.BadPort, Settings.MIN_PORT, Settings.MAX_PORT));
+				Utils.ErrorAsync(string.Format(Res.Error.BadPort, Settings.MIN_PORT, Settings.MAX_PORT));
 				return;
 			}
 

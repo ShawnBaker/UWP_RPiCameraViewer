@@ -147,8 +147,14 @@
   <data name="CamerasItem.Content" xml:space="preserve">
     <value>Cameras</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Delete.Label" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Done</value>
   </data>
   <data name="EditCamera" xml:space="preserve">
     <value>Edit Camera</value>
@@ -213,6 +219,9 @@ For example, to stream 1280x720 video at 15 frames per second over port 5001, yo
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="NumNewCamerasFound" xml:space="preserve">
+    <value>New cameras found: {0}</value>
+  </data>
   <data name="OkToDeleteAllCameras" xml:space="preserve">
     <value>Are you sure you want to delete all the cameras?</value>
   </data>
@@ -227,6 +236,12 @@ For example, to stream 1280x720 video at 15 frames per second over port 5001, yo
   </data>
   <data name="Scan.Label" xml:space="preserve">
     <value>Scan</value>
+  </data>
+  <data name="ScanningForCameras.Text" xml:space="preserve">
+    <value>Scanning for Cameras</value>
+  </data>
+  <data name="ScanningOnPort" xml:space="preserve">
+    <value>Scanning on port {0}</value>
   </data>
   <data name="ScanTimeout.Text" xml:space="preserve">
     <value>Scan Timeout</value>
@@ -245,5 +260,8 @@ For example, to stream 1280x720 video at 15 frames per second over port 5001, yo
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
   </data>
 </root>

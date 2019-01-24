@@ -33,7 +33,7 @@ namespace RPiCameraViewer
 			string name = nameTextBox.Text.Trim();
 			if (name.Length == 0)
 			{
-				Utils.Error(Res.Error.NoCameraName);
+				Utils.ErrorAsync(Res.Error.NoCameraName);
 				return;
 			}
 
@@ -49,7 +49,7 @@ namespace RPiCameraViewer
 			}
 			if (timeout < Settings.MIN_TIMEOUT || timeout > Settings.MAX_TIMEOUT)
 			{
-				Utils.Error(string.Format(Res.Error.BadScanTimeout, Settings.MIN_TIMEOUT, Settings.MAX_TIMEOUT));
+				Utils.ErrorAsync(string.Format(Res.Error.BadScanTimeout, Settings.MIN_TIMEOUT, Settings.MAX_TIMEOUT));
 				return;
 			}
 
@@ -65,7 +65,7 @@ namespace RPiCameraViewer
 			}
 			if (port < Settings.MIN_PORT || port > Settings.MAX_PORT)
 			{
-				Utils.Error(string.Format(Res.Error.BadPort, Settings.MIN_PORT, Settings.MAX_PORT));
+				Utils.ErrorAsync(string.Format(Res.Error.BadPort, Settings.MIN_PORT, Settings.MAX_PORT));
 				return;
 			}
 

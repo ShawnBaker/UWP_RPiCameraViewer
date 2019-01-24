@@ -1,4 +1,5 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
+using System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -68,7 +69,7 @@ namespace RPiCameraViewer
 		{
 			ImageButton button = (ImageButton)sender;
 			camera = button.Tag as Camera;
-			Utils.YesNo(Res.Str.OkToDeleteCamera, DeleteYesHandler, null);
+			Utils.YesNoAsync(Res.Str.OkToDeleteCamera, DeleteYesHandler, null);
 		}
 
 		/// <summary>
@@ -94,7 +95,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleDeleteAllButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
 		{
-			Utils.YesNo(Res.Str.OkToDeleteAllCameras, DeleteAllYesHandler, null);
+			Utils.YesNoAsync(Res.Str.OkToDeleteAllCameras, DeleteAllYesHandler, null);
 		}
 
 		/// <summary>
@@ -110,8 +111,10 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Scans the local network for cameras.
 		/// </summary>
-		private void HandleScanButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private async void HandleScanButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
 		{
+			ScannerContentDialog scannerDialog = new ScannerContentDialog(settings);
+			await scannerDialog.ShowAsync();
 		}
 
 		/// <summary>

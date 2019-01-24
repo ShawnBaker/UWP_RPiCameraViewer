@@ -1,0 +1,17 @@
+﻿<ContentDialog
+    x:Class="RPiCameraViewer.ScannerContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RPiCameraViewer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel>
+		<TextBlock x:Uid="ScanningForCameras" Style="{StaticResource SubtitleTextBlockStyle}" FontWeight="Bold" HorizontalAlignment="Center"/>
+		<TextBlock x:Name="portTextBlock" Margin="0,16,0,0" HorizontalAlignment="Center"/>
+		<ProgressBar x:Name="progressBar" Minimum="0" Maximum="254" Margin="0,8"/>
+		<TextBlock x:Name="statusTextBlock" HorizontalAlignment="Center"/>
+		<Button x:Name="cancelButton" Margin="0,16" Padding="24,4" HorizontalAlignment="Center" Click="HandleCancelButtonClick"/>
+	</StackPanel>
+</ContentDialog>

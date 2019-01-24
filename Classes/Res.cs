@@ -24,6 +24,8 @@ namespace RPiCameraViewer
 		{
 			public static string AllNetworks { get { return res.GetString("AllNetworks"); } }
 			public static string AppName { get { return res.GetString("AppName"); } }
+			public static string Cancel { get { return res.GetString("Cancel"); } }
+			public static string Done { get { return res.GetString("Done"); } }
 			public static string EditCamera { get { return res.GetString("EditCamera"); } }
 			public static string Error { get { return res.GetString("Error"); } }
 			public static string Camera { get { return res.GetString("Camera"); } }
@@ -33,9 +35,13 @@ namespace RPiCameraViewer
 			public static string NewCamera { get { return res.GetString("NewCamera"); } }
 			public static string No { get { return res.GetString("No"); } }
 			public static string NoNetwork { get { return res.GetString("NoNetwork"); } }
+			public static string NumNewCamerasFound { get { return res.GetString("NumNewCamerasFound"); } }
+			public static string OK { get { return res.GetString("OK"); } }
 			public static string OkToDeleteAllCameras { get { return res.GetString("OkToDeleteAllCameras"); } }
 			public static string OkToDeleteCamera { get { return res.GetString("OkToDeleteCamera"); } }
 			public static string OpenSource { get { return res.GetString("OpenSource"); } }
+			public static string ScanningForCameras { get { return res.GetString("ScanningForCameras"); } }
+			public static string ScanningOnPort { get { return res.GetString("ScanningOnPort"); } }
 			public static string Version { get { return res.GetString("Version"); } }
 			public static string Yes { get { return res.GetString("Yes"); } }
 		}
