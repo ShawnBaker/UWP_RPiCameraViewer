@@ -10,6 +10,7 @@ namespace RPiCameraViewer
 	/// </summary>
 	public sealed partial class CameraPage : Page
 	{
+		// instance variables
 		private Settings settings = new Settings();
 		private bool newCamera;
 		private Camera camera;
