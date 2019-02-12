@@ -171,7 +171,7 @@ namespace RPiCameraViewer
 			{
 				foreach (Camera camera in newCameras)
 				{
-					camera.Name = settings.CameraName + ++highest;
+					camera.Name = settings.CameraName + " " + ++highest;
 					settings.Cameras.Add(camera);
 					//Log.info("camera: " + camera.toString());
 				}
