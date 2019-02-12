@@ -95,14 +95,20 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\ByteArrayBuffer.cs" />
     <Compile Include="Classes\Camera.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\SocketReader.cs" />
+    <Compile Include="Classes\SpsParser.cs" />
+    <Compile Include="Classes\SpsReader.cs" />
     <Compile Include="Pages\CameraPage.xaml.cs">
       <DependentUpon>CameraPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ScannerContentDialog.xaml.cs">
       <DependentUpon>ScannerContentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\VideoPage.xaml.cs">
+      <DependentUpon>VideoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\Res.cs" />
@@ -157,6 +163,30 @@
     <Content Include="Assets\chevron\chevron_pressed.scale-225.png" />
     <Content Include="Assets\chevron\chevron_pressed.scale-300.png" />
     <Content Include="Assets\chevron\chevron_pressed.scale-400.png" />
+    <Content Include="Assets\close_button\close_button.scale-100.png" />
+    <Content Include="Assets\close_button\close_button.scale-125.png" />
+    <Content Include="Assets\close_button\close_button.scale-150.png" />
+    <Content Include="Assets\close_button\close_button.scale-175.png" />
+    <Content Include="Assets\close_button\close_button.scale-200.png" />
+    <Content Include="Assets\close_button\close_button.scale-225.png" />
+    <Content Include="Assets\close_button\close_button.scale-300.png" />
+    <Content Include="Assets\close_button\close_button.scale-400.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-100.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-125.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-150.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-175.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-200.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-225.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-300.png" />
+    <Content Include="Assets\close_button\close_disabled_button.scale-400.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-100.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-125.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-150.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-175.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-200.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-225.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-300.png" />
+    <Content Include="Assets\close_button\close_pressed_button.scale-400.png" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-125.png" />
     <Content Include="Assets\LargeTile.scale-150.png" />
@@ -167,6 +197,30 @@
     <Content Include="Assets\SmallTile.scale-150.png" />
     <Content Include="Assets\SmallTile.scale-200.png" />
     <Content Include="Assets\SmallTile.scale-400.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-100.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-125.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-150.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-175.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-200.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-225.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-300.png" />
+    <Content Include="Assets\snapshot_button\snapshot_button.scale-400.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-100.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-125.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-150.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-175.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-200.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-225.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-300.png" />
+    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-400.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-100.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-125.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-150.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-175.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-200.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-225.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-300.png" />
+    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-400.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />
@@ -254,6 +308,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\VideoPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
