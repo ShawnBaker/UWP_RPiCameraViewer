@@ -1,4 +1,5 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace RPiCameraViewer
@@ -27,7 +28,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Validates and saves the settings.
 		/// </summary>
-		private void HandleSaveButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleSaveButtonClick(object sender, RoutedEventArgs e)
 		{
 			// get the camera name
 			string name = nameTextBox.Text.Trim();
@@ -83,7 +84,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Returns to the previous page.
 		/// </summary>
-		private void HandleCancelButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleCancelButtonClick(object sender, RoutedEventArgs e)
 		{
 			Frame.GoBack();
 		}

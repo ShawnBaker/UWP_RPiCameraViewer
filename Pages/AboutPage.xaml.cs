@@ -1,5 +1,6 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
 using System;
+using Windows.UI.Xaml;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -72,7 +73,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Return to the previous page.
 		/// </summary>
-		private void HandleBackButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleBackButtonClick(object sender, RoutedEventArgs e)
 		{
 			Frame.GoBack();
 		}
