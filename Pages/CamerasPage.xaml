@@ -30,7 +30,7 @@
 				<AppBarButton Icon="Setting" x:Uid="Settings" Click="HandleSettingsButtonClick" />
 			</CommandBar.SecondaryCommands>
 		</CommandBar>
-		<ListView Grid.Row="1" x:Name="camerasListView">
+		<ListView Grid.Row="1" x:Name="camerasListView" IsItemClickEnabled="True" ItemClick="HandleItemClick">
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<Grid Margin="0,8">

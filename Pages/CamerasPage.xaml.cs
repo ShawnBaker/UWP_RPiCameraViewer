@@ -1,6 +1,7 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
 using System;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -55,7 +56,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Shows the details for the selected camera.
 		/// </summary>
-		private void HandleDetailsButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleDetailsButtonClick(object sender, RoutedEventArgs e)
 		{
 			ImageButton button = (ImageButton)sender;
 			Camera camera = button.Tag as Camera;
@@ -65,7 +66,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Prompts the user to delete the selected camera.
 		/// </summary>
-		private void HandleDeleteButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleDeleteButtonClick(object sender, RoutedEventArgs e)
 		{
 			ImageButton button = (ImageButton)sender;
 			camera = button.Tag as Camera;
@@ -85,7 +86,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Adds a new camera.
 		/// </summary>
-		private void HandleAddButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleAddButtonClick(object sender, RoutedEventArgs e)
 		{
 			Frame.Navigate(typeof(CameraPage), null, new DrillInNavigationTransitionInfo());
 		}
@@ -93,7 +94,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Prompts the user to delete all cameras.
 		/// </summary>
-		private void HandleDeleteAllButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleDeleteAllButtonClick(object sender, RoutedEventArgs e)
 		{
 			Utils.YesNoAsync(Res.Str.OkToDeleteAllCameras, DeleteAllYesHandler, null);
 		}
@@ -111,7 +112,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Scans the local network for cameras.
 		/// </summary>
-		private async void HandleScanButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private async void HandleScanButtonClick(object sender, RoutedEventArgs e)
 		{
 			ScannerContentDialog scannerDialog = new ScannerContentDialog(settings);
 			await scannerDialog.ShowAsync();
@@ -120,7 +121,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Displays the about page.
 		/// </summary>
-		private void HandleAboutButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleAboutButtonClick(object sender, RoutedEventArgs e)
 		{
 			Frame.Navigate(typeof(AboutPage), null, new DrillInNavigationTransitionInfo());
 		}
@@ -128,7 +129,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Displays the help page.
 		/// </summary>
-		private void HandleHelpButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleHelpButtonClick(object sender, RoutedEventArgs e)
 		{
 			Frame.Navigate(typeof(HelpPage), null, new DrillInNavigationTransitionInfo());
 		}
@@ -136,9 +137,18 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Displays the settings page.
 		/// </summary>
-		private void HandleSettingsButtonClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+		private void HandleSettingsButtonClick(object sender, RoutedEventArgs e)
 		{
 			Frame.Navigate(typeof(SettingsPage), null, new DrillInNavigationTransitionInfo());
+		}
+
+		/// <summary>
+		/// Displays the video page.
+		/// </summary>
+		private void HandleItemClick(object sender, ItemClickEventArgs e)
+		{
+			Camera camera = e.ClickedItem as Camera;
+			Frame.Navigate(typeof(VideoPage), camera, new DrillInNavigationTransitionInfo());
 		}
 	}
 }
