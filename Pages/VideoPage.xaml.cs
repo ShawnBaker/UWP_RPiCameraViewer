@@ -264,7 +264,7 @@ namespace RPiCameraViewer
 				streamSource.SampleRequested += HandleSampleRequested;
 				streamSource.SampleRendered += HandleSampleRendered;
 
-				Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
+				Windows.Foundation.IAsyncAction action = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
 				{
 					media.SetMediaStreamSource(streamSource);
 					media.Play();

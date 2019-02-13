@@ -93,7 +93,7 @@ namespace RPiCameraViewer
 			// create and start the threads
 			for (int t = 0; t < NUM_THREADS; t++)
 			{
-				Task.Run(CheckDeviceConnectionsAsync);
+				Task task = Task.Run(CheckDeviceConnectionsAsync);
 			}
 
 			// wait for the threads to finish
