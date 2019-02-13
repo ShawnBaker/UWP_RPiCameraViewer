@@ -98,7 +98,6 @@
     <Compile Include="Classes\Nal.cs" />
     <Compile Include="Classes\Camera.cs" />
     <Compile Include="Classes\Settings.cs" />
-    <Compile Include="Classes\SocketReader.cs" />
     <Compile Include="Classes\SpsParser.cs" />
     <Compile Include="Classes\SpsReader.cs" />
     <Compile Include="Pages\CameraPage.xaml.cs">
