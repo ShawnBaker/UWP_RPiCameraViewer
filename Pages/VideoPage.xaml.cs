@@ -1,4 +1,5 @@
-﻿// Copyright © 2019 Shawn Baker using the MIT License.
+﻿#define ENABLE_DECODING
+// Copyright © 2019 Shawn Baker using the MIT License.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,12 +34,13 @@ namespace RPiCameraViewer
 		private bool isCancelled;
 		private StreamSocket socket;
 		private bool decoding = false;
+#if ENABLE_DECODING
 		private MediaStreamSource streamSource = null;
 		private MediaStreamSourceSampleRequest request = null;
 		private MediaStreamSourceSampleRequestDeferral deferral = null;
 		private Queue<Nal> availableNals = new Queue<Nal>();
 		private Queue<Nal> usedNals = new Queue<Nal>();
-
+#endif
 		public VideoPage()
 		{
 			InitializeComponent();
@@ -48,19 +50,21 @@ namespace RPiCameraViewer
 		{
 			base.OnNavigatedTo(e);
 
+			// get the camera, display its name
 			camera = e.Parameter as Camera;
 			nameTextBlock.Text = camera.Name;
-
+#if ENABLE_DECODING
+			// configure the media element
 			media.RealTimePlayback = true;
 			//media.IsFullWindow = true;
 			media.AreTransportControlsEnabled = false;
 
 			// create the NAL buffers
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 100; i++)
 			{
 				availableNals.Enqueue(new Nal(NAL_SIZE_INC));
 			}
-
+#endif
 			// launch the main thread
 			Task.Run(ReadSocketAsync);
 		}
@@ -85,9 +89,14 @@ namespace RPiCameraViewer
 
 		private async Task ReadSocketAsync()
 		{
+#if ENABLE_DECODING
 			Nal nal = availableNals.Dequeue();
+#else
+			Nal nal = new Nal(NAL_SIZE_INC);
+#endif
 			int numZeroes = 0;
 			int numReadErrors = 0;
+			bool gotHeader = false;
 
 			// look for a TCP/IP connection
 			try
@@ -102,13 +111,12 @@ namespace RPiCameraViewer
 				// if we get here, we opened the socket
 				DataReader reader = new DataReader(socket.InputStream);
 				reader.InputStreamOptions = InputStreamOptions.Partial;
-				//DataWriter writer = new DataWriter(nal.AsStream());
 
 				while (!isCancelled)
 				{
 					uint len = await reader.LoadAsync(BUFFER_SIZE);
 					//Debug.WriteLine("numBytes = {0}", len);
-
+#if ENABLE_DECODING
 					if (nal == null)
 					{
 						lock (availableNals)
@@ -124,9 +132,10 @@ namespace RPiCameraViewer
 							reader.ReadBuffer(len);
 						}
 					}
-
+					else
+#endif
 					// process the input buffer
-					else if (len > 0)
+					if (len > 0)
 					{
 						numReadErrors = 0;
 						for (int i = 0; i < len && nal != null && !isCancelled; i++)
@@ -152,16 +161,21 @@ namespace RPiCameraViewer
 								{
 									if (nal.Stream.Length > 4)
 									{
-										nal.Buffer.Length = (uint)nal.Stream.Length - 4;
-										int nalType = ProcessNal(nal);
-										if (isCancelled) break;
-										if (nalType != -1)
+										if (gotHeader)
 										{
-											lock (availableNals)
+											nal.Buffer.Length = (uint)nal.Stream.Length - 4;
+											int nalType = ProcessNal(nal);
+											if (isCancelled) break;
+#if ENABLE_DECODING
+											if (nalType != -1)
 											{
-												//Debug.WriteLine("availableNals.Dequeue: {0}", availableNals.Count);
-												nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
+												lock (availableNals)
+												{
+													//Debug.WriteLine("availableNals.Dequeue: {0}", availableNals.Count);
+													nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
+												}
 											}
+#endif
 										}
 										if (nal != null)
 										{
@@ -177,6 +191,7 @@ namespace RPiCameraViewer
 											//Debug.WriteLine("null");
 										}
 									}
+									gotHeader = true;
 								}
 								numZeroes = 0;
 							}
@@ -194,9 +209,10 @@ namespace RPiCameraViewer
 				}
 				reader.Dispose();
 				socket.Dispose();
-				SetDecodingState(false);
+				decoding = false;
 				await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
 				{
+					media.Stop();
 					Frame.GoBack();
 				});
 			}
@@ -205,34 +221,6 @@ namespace RPiCameraViewer
 				Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
 				return;
 			}
-		}
-
-		/// <summary>
-		/// Sets the decoding state.
-		/// </summary>
-		/// <param name="newDecoding">New decoding state.</param>
-		private void SetDecodingState(bool newDecoding)
-		{
-			try
-			{
-				if (newDecoding != decoding && streamSource != null)
-				{
-					Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-					{
-						if (newDecoding)
-						{
-							media.Play();
-						}
-						else
-						{
-							media.Stop();
-						}
-					});
-					decoding = newDecoding;
-				}
-				decoding = newDecoding;
-			}
-			catch { }
 		}
 
 		/// <summary>
@@ -251,7 +239,7 @@ namespace RPiCameraViewer
 				nal.Buffer.CopyTo(0, header, 0, 5);
 				nalType = (header[0] == 0 && header[1] == 0 && header[2] == 0 && header[3] == 1) ? (header[4] & 0x1F) : -1;
 			}
-			//Debug.WriteLine(String.Format("NAL: type = {0}, len = {1}", nalType, nal.Length));
+			//Debug.WriteLine(String.Format("NAL: type = {0}, len = {1}", nalType, nal.Buffer.Length));
 
 			// process the first SPS record we encounter
 			if (nalType == 7 && !decoding)
@@ -259,6 +247,8 @@ namespace RPiCameraViewer
 				byte[] sps = new byte[nal.Buffer.Length];
 				nal.Buffer.CopyTo(sps);
 				SpsParser parser = new SpsParser(sps, (int)nal.Buffer.Length);
+				//Debug.WriteLine(String.Format("SPS: {0}x{1} @ {2}", parser.width, parser.height, parser.fps));
+#if ENABLE_DECODING
 				VideoEncodingProperties properties = VideoEncodingProperties.CreateH264();
 				properties.ProfileId = H264ProfileIds.High;
 				properties.Width = (uint)parser.width;
@@ -266,7 +256,6 @@ namespace RPiCameraViewer
 				//properties.Bitrate = (uint)parser.bitrate;
 				//properties.Bitrate = 1000000;
 				//properties.FrameRate = parser.fps;
-				//Debug.WriteLine(String.Format("SPS: {0}x{1} @ {2}", parser.width, parser.height, parser.fps));
 
 				streamSource = new MediaStreamSource(new VideoStreamDescriptor(properties));
 				streamSource.BufferTime = TimeSpan.Zero;
@@ -275,22 +264,21 @@ namespace RPiCameraViewer
 				streamSource.SampleRequested += HandleSampleRequested;
 				streamSource.SampleRendered += HandleSampleRendered;
 
-				Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+				Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
 				{
 					media.SetMediaStreamSource(streamSource);
+					media.Play();
 				});
-
-				SetDecodingState(true);
+#endif
+				decoding = true;
 			}
-
+#if ENABLE_DECODING
 			// queue the frame
 			if (nalType > 0 && decoding)
 			{
-				//Debug.WriteLine("usedNals.Enqueue");
 				if (deferral != null)
 				{
-					//request.Sample = MediaStreamSample.CreateFromBuffer(nal, new TimeSpan(0, 0, 0, 0, 66));
-					request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0, 0, 0, 0, 66));
+					request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0));
 					lock (availableNals)
 					{
 						//Debug.WriteLine("availableNals.Enqueue");
@@ -303,15 +291,17 @@ namespace RPiCameraViewer
 				}
 				else
 				{
+					//Debug.WriteLine("usedNals.Enqueue");
 					lock (usedNals)
 					{
 						usedNals.Enqueue(nal);
 					}
 				}
 			}
+#endif
 			return decoding ? nalType : -1;
 		}
-
+#if ENABLE_DECODING
 		private void HandleSampleRequested(MediaStreamSource sender, MediaStreamSourceSampleRequestedEventArgs args)
 		{
 			//Debug.WriteLine("HandleSampleRequested");
@@ -323,8 +313,7 @@ namespace RPiCameraViewer
 			}
 			if (nal != null)
 			{
-				//args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal, new TimeSpan(0, 0, 0, 0, 66));
-				args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0, 0, 0, 0, 66));
+				args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0));
 				lock (availableNals)
 				{
 					//Debug.WriteLine("availableNals.Enqueue");
@@ -343,5 +332,6 @@ namespace RPiCameraViewer
 		{
 			//Debug.WriteLine("HandleSampleRendered");
 		}
+#endif
 	}
 }
