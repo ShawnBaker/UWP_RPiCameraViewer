@@ -35,7 +35,9 @@ namespace RPiCameraViewer
 		public void Resize(uint capacity)
 		{
 			Stream = null;
+			Buffer.Length = Buffer.Capacity;
 			Buffer newBuffer = new Buffer(capacity);
+			newBuffer.Length = Buffer.Capacity;
 			Buffer.CopyTo(0, newBuffer, 0, Buffer.Capacity);
 			Stream = newBuffer.AsStream();
 			Stream.Seek(Buffer.Capacity, SeekOrigin.Begin);
