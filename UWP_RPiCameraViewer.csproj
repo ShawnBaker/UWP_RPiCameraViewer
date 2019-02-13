@@ -95,7 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Classes\ByteArrayBuffer.cs" />
+    <Compile Include="Classes\Nal.cs" />
     <Compile Include="Classes\Camera.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\SocketReader.cs" />

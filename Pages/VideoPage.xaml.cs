@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,8 +36,8 @@ namespace RPiCameraViewer
 		private MediaStreamSource streamSource = null;
 		private MediaStreamSourceSampleRequest request = null;
 		private MediaStreamSourceSampleRequestDeferral deferral = null;
-		private Queue<ByteArrayBuffer> availableNals = new Queue<ByteArrayBuffer>();
-		private Queue<ByteArrayBuffer> usedNals = new Queue<ByteArrayBuffer>();
+		private Queue<Nal> availableNals = new Queue<Nal>();
+		private Queue<Nal> usedNals = new Queue<Nal>();
 
 		public VideoPage()
 		{
@@ -57,7 +58,7 @@ namespace RPiCameraViewer
 			// create the NAL buffers
 			for (int i = 0; i < 10; i++)
 			{
-				availableNals.Enqueue(new ByteArrayBuffer(NAL_SIZE_INC));
+				availableNals.Enqueue(new Nal(NAL_SIZE_INC));
 			}
 
 			// launch the main thread
@@ -84,7 +85,7 @@ namespace RPiCameraViewer
 
 		private async Task ReadSocketAsync()
 		{
-			ByteArrayBuffer nal = availableNals.Dequeue();
+			Nal nal = availableNals.Dequeue();
 			int numZeroes = 0;
 			int numReadErrors = 0;
 
@@ -130,13 +131,15 @@ namespace RPiCameraViewer
 						numReadErrors = 0;
 						for (int i = 0; i < len && nal != null && !isCancelled; i++)
 						{
-							// add the byte to the NAL
-							if (nal.Length == nal.Capacity)
+							// resize the NAL if necessary
+							if (nal.Stream.Length == nal.Buffer.Capacity)
 							{
-								nal.Resize(nal.Capacity + NAL_SIZE_INC);
+								nal.Resize(nal.Buffer.Capacity + NAL_SIZE_INC);
 							}
+
+							// add the byte to the NAL
 							byte b = reader.ReadByte();
-							nal.Buffer[nal.Length++] = b;
+							nal.Stream.WriteByte(b);
 
 							// look for a header
 							if (b == 0)
@@ -147,9 +150,9 @@ namespace RPiCameraViewer
 							{
 								if (b == 1 && numZeroes == 3)
 								{
-									if (nal.Length > 4)
+									if (nal.Stream.Length > 4)
 									{
-										nal.Length -= 4;
+										nal.Buffer.Length = (uint)nal.Stream.Length - 4;
 										int nalType = ProcessNal(nal);
 										if (isCancelled) break;
 										if (nalType != -1)
@@ -159,20 +162,15 @@ namespace RPiCameraViewer
 												//Debug.WriteLine("availableNals.Dequeue: {0}", availableNals.Count);
 												nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
 											}
-											if (nal != null)
-											{
-												nal.Buffer[0] = nal.Buffer[1] = nal.Buffer[2] = 0;
-												nal.Buffer[3] = 1;
-											}
-										}
-										else
-										{
-											nal.Buffer[0] = nal.Buffer[1] = nal.Buffer[2] = 0;
-											nal.Buffer[3] = 1;
 										}
 										if (nal != null)
 										{
-											nal.Length = 4;
+											nal.Stream.Seek(0, SeekOrigin.Begin);
+											nal.Stream.SetLength(0);
+											nal.Stream.WriteByte(0);
+											nal.Stream.WriteByte(0);
+											nal.Stream.WriteByte(0);
+											nal.Stream.WriteByte(1);
 										}
 										else
 										{
@@ -194,6 +192,9 @@ namespace RPiCameraViewer
 						}
 					}
 				}
+				reader.Dispose();
+				socket.Dispose();
+				SetDecodingState(false);
 				await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
 				{
 					Frame.GoBack();
@@ -240,16 +241,24 @@ namespace RPiCameraViewer
 		/// <param name="nal">Array of bytes containing the NAL.</param>
 		/// <param name="nalLen">Number of bytes in the NAL.</param>
 		/// <returns>Type of NAL.</returns>
-		private int ProcessNal(ByteArrayBuffer nal)
+		private int ProcessNal(Nal nal)
 		{
 			// get the NAL type
-			int nalType = (nal.Length > 4 && nal.Buffer[0] == 0 && nal.Buffer[1] == 0 && nal.Buffer[2] == 0 && nal.Buffer[3] == 1) ? (nal.Buffer[4] & 0x1F) : -1;
+			int nalType = -1;
+			if (nal.Buffer.Length > 4)
+			{
+				byte[] header = new byte[5];
+				nal.Buffer.CopyTo(0, header, 0, 5);
+				nalType = (header[0] == 0 && header[1] == 0 && header[2] == 0 && header[3] == 1) ? (header[4] & 0x1F) : -1;
+			}
 			//Debug.WriteLine(String.Format("NAL: type = {0}, len = {1}", nalType, nal.Length));
 
 			// process the first SPS record we encounter
 			if (nalType == 7 && !decoding)
 			{
-				SpsParser parser = new SpsParser(nal.Buffer, (int)nal.Length);
+				byte[] sps = new byte[nal.Buffer.Length];
+				nal.Buffer.CopyTo(sps);
+				SpsParser parser = new SpsParser(sps, (int)nal.Buffer.Length);
 				VideoEncodingProperties properties = VideoEncodingProperties.CreateH264();
 				properties.ProfileId = H264ProfileIds.High;
 				properties.Width = (uint)parser.width;
@@ -281,7 +290,7 @@ namespace RPiCameraViewer
 				if (deferral != null)
 				{
 					//request.Sample = MediaStreamSample.CreateFromBuffer(nal, new TimeSpan(0, 0, 0, 0, 66));
-					request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer.AsBuffer(), new TimeSpan(0, 0, 0, 0, 66));
+					request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0, 0, 0, 0, 66));
 					lock (availableNals)
 					{
 						//Debug.WriteLine("availableNals.Enqueue");
@@ -306,7 +315,7 @@ namespace RPiCameraViewer
 		private void HandleSampleRequested(MediaStreamSource sender, MediaStreamSourceSampleRequestedEventArgs args)
 		{
 			//Debug.WriteLine("HandleSampleRequested");
-			ByteArrayBuffer nal;
+			Nal nal;
 			lock (usedNals)
 			{
 				//Debug.WriteLine("usedNals.Dequeue: {0}", usedNals.Count);
@@ -315,7 +324,7 @@ namespace RPiCameraViewer
 			if (nal != null)
 			{
 				//args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal, new TimeSpan(0, 0, 0, 0, 66));
-				args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer.AsBuffer(), new TimeSpan(0, 0, 0, 0, 66));
+				args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0, 0, 0, 0, 66));
 				lock (availableNals)
 				{
 					//Debug.WriteLine("availableNals.Enqueue");
