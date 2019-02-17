@@ -9,8 +9,10 @@
     mc:Ignorable="d"
     Background="Black">
 
-    <Grid>
-		<MediaElement x:Name="media" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+	<Grid>
+		<Border x:Name="border">
+			<MediaElement x:Name="media" Margin="0,0,0,0"/>
+		</Border>
 		<controls:ImageButton x:Name="closeButton" Margin="0,8,8,0" Click="HandleCloseButtonClick" Canvas.ZIndex="1"
 							  VerticalAlignment="Top" HorizontalAlignment="Right"
 							  NormalStateImageSource="/Assets/close_button/close_button.png"

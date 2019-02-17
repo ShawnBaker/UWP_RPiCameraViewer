@@ -100,6 +100,7 @@
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\SpsParser.cs" />
     <Compile Include="Classes\SpsReader.cs" />
+    <Compile Include="Classes\ZoomPan.cs" />
     <Compile Include="Pages\CameraPage.xaml.cs">
       <DependentUpon>CameraPage.xaml</DependentUpon>
     </Compile>

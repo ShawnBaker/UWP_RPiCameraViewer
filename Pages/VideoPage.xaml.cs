@@ -34,6 +34,7 @@ namespace RPiCameraViewer
 		private bool isCancelled;
 		private StreamSocket socket;
 		private bool decoding = false;
+		private ZoomPan zoomPan;
 #if ENABLE_DECODING
 		private MediaStreamSource streamSource = null;
 		private MediaStreamSourceSampleRequest request = null;
@@ -41,11 +42,17 @@ namespace RPiCameraViewer
 		private Queue<Nal> availableNals = new Queue<Nal>();
 		private Queue<Nal> usedNals = new Queue<Nal>();
 #endif
+		/// <summary>
+		/// Constructor - Initializes the controls.
+		/// </summary>
 		public VideoPage()
 		{
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// Initializes the media element and starts the socket reading thread.
+		/// </summary>
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
 			base.OnNavigatedTo(e);
@@ -56,8 +63,10 @@ namespace RPiCameraViewer
 #if ENABLE_DECODING
 			// configure the media element
 			media.RealTimePlayback = true;
-			//media.IsFullWindow = true;
 			media.AreTransportControlsEnabled = false;
+
+			// create the zoom/pan handler
+			zoomPan = new ZoomPan(border, media);
 
 			// create the NAL buffers
 			for (int i = 0; i < 100; i++)
@@ -69,9 +78,11 @@ namespace RPiCameraViewer
 			Task.Run(ReadSocketAsync);
 		}
 
+		/// <summary>
+		/// Closes the video page.
+		/// </summary>
 		private void HandleCloseButtonClick(object sender, RoutedEventArgs e)
 		{
-			//ImageButton button = (ImageButton)sender;
 			if (isCancelled)
 			{
 				Frame.GoBack();
@@ -82,11 +93,17 @@ namespace RPiCameraViewer
 			}
 		}
 
+		/// <summary>
+		/// Taks a snapshot of the stream.
+		/// </summary>
 		private void HandleSnapshotButtonClick(object sender, RoutedEventArgs e)
 		{
-			//ImageButton button = (ImageButton)sender;
 		}
 
+		/// <summary>
+		/// Reads bytes form the socket and parses them into NALs.
+		/// </summary>
+		/// <returns>The asynchronous task.</returns>
 		private async Task ReadSocketAsync()
 		{
 #if ENABLE_DECODING
@@ -226,8 +243,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Processes a NAL.
 		/// </summary>
-		/// <param name="nal">Array of bytes containing the NAL.</param>
-		/// <param name="nalLen">Number of bytes in the NAL.</param>
+		/// <param name="nal">The NAL to be processed.</param>
 		/// <returns>Type of NAL.</returns>
 		private int ProcessNal(Nal nal)
 		{
@@ -262,7 +278,6 @@ namespace RPiCameraViewer
 				streamSource.CanSeek = false;
 				streamSource.Duration = TimeSpan.Zero;
 				streamSource.SampleRequested += HandleSampleRequested;
-				streamSource.SampleRendered += HandleSampleRendered;
 
 				Windows.Foundation.IAsyncAction action = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
 				{
@@ -302,6 +317,9 @@ namespace RPiCameraViewer
 			return decoding ? nalType : -1;
 		}
 #if ENABLE_DECODING
+		/// <summary>
+		/// Dequeues a NAL and gives it to the decoder.
+		/// </summary>
 		private void HandleSampleRequested(MediaStreamSource sender, MediaStreamSourceSampleRequestedEventArgs args)
 		{
 			//Debug.WriteLine("HandleSampleRequested");
@@ -326,11 +344,6 @@ namespace RPiCameraViewer
 				request = args.Request;
 				deferral = args.Request.GetDeferral();
 			}
-		}
-
-		private void HandleSampleRendered(MediaStreamSource sender, MediaStreamSourceSampleRenderedEventArgs args)
-		{
-			//Debug.WriteLine("HandleSampleRendered");
 		}
 #endif
 	}
