@@ -1,6 +1,4 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
-using System;
-
 namespace RPiCameraViewer
 {
 	public class SpsParser
