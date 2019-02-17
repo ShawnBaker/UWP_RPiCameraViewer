@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿// Copyright © 2019 Shawn Baker using the MIT License.
+using Windows.Storage;
 
 namespace RPiCameraViewer
 {
