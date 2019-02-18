@@ -1,5 +1,5 @@
-﻿#define ENABLE_DECODING
-// Copyright © 2019 Shawn Baker using the MIT License.
+﻿// Copyright © 2019 Shawn Baker using the MIT License.
+#define ENABLE_DECODING
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,6 +14,7 @@ using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace RPiCameraViewer
@@ -35,6 +36,7 @@ namespace RPiCameraViewer
 		private StreamSocket socket;
 		private bool decoding = false;
 		private ZoomPan zoomPan;
+		private Storyboard storyboard;
 #if ENABLE_DECODING
 		private MediaStreamSource streamSource = null;
 		private MediaStreamSourceSampleRequest request = null;
@@ -65,17 +67,52 @@ namespace RPiCameraViewer
 			media.RealTimePlayback = true;
 			media.AreTransportControlsEnabled = false;
 
-			// create the zoom/pan handler
-			zoomPan = new ZoomPan(border, media);
-
 			// create the NAL buffers
 			for (int i = 0; i < 100; i++)
 			{
 				availableNals.Enqueue(new Nal(NAL_SIZE_INC));
 			}
 #endif
+			// create the zoom/pan handler
+			zoomPan = new ZoomPan(border, media);
+
+			// create the fade out animation
+			storyboard = new Storyboard();
+			DoubleAnimation animation = new DoubleAnimation();
+			animation.From = 1.0;
+			animation.To = 0.0;
+			animation.Duration = new Duration(new TimeSpan(0, 0, 1));
+			animation.BeginTime = new TimeSpan(0, 0, 8);
+			animation.Completed += HandleAnimationCompleted;
+			Storyboard.SetTarget(animation, closeButton);
+			Storyboard.SetTargetProperty(animation, "Opacity");
+			storyboard.Children.Add(animation);
+			storyboard.Begin();
+			media.Tapped += HandleMediaTapped;
+
 			// launch the main thread
 			Task.Run(ReadSocketAsync);
+		}
+
+		/// <summary>
+		/// Disables the controls after they fade out.
+		/// </summary>
+		private void HandleAnimationCompleted(object sender, object e)
+		{
+			closeButton.Opacity = 0;
+			closeButton.IsEnabled = false;
+			storyboard.Stop();
+		}
+
+		/// <summary>
+		/// Reenables and shows the controls when the video is tapped.
+		/// </summary>
+		private void HandleMediaTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+		{
+			storyboard.Stop();
+			closeButton.Opacity = 1;
+			closeButton.IsEnabled = true;
+			storyboard.Begin();
 		}
 
 		/// <summary>

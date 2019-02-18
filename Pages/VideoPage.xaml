@@ -22,8 +22,11 @@
 							  VerticalAlignment="Bottom" HorizontalAlignment="Right"
 							  NormalStateImageSource="/Assets/snapshot_button/snapshot_button.png"
 							  DisabledStateImageSource="/Assets/snapshot_button/snapshot_disabled_button.png"
-							  PressedStateImageSource="/Assets/snapshot_button/snapshot_pressed_button.png"/>
+							  PressedStateImageSource="/Assets/snapshot_button/snapshot_pressed_button.png"
+							  Opacity="{Binding Opacity, ElementName=closeButton}"
+							  IsEnabled="{Binding IsEnabled, ElementName=closeButton}"/>
 		<TextBlock x:Name="nameTextBlock" Margin="8,0,0,4" Style="{StaticResource SubtitleTextBlockStyle}" FontWeight="Bold" Foreground="Red"
-				   TextWrapping="NoWrap" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+				   TextWrapping="NoWrap" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+				   Opacity="{Binding Opacity, ElementName=closeButton}"/>
 	</Grid>
 </Page>
