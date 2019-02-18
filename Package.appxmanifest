@@ -25,5 +25,6 @@
   <Capabilities>
     <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
+    <uap:Capability Name="picturesLibrary" />
   </Capabilities>
 </Package>

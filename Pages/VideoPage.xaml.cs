@@ -7,15 +7,18 @@ using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
 using Windows.Media.Core;
 using Windows.Media.MediaProperties;
 using Windows.Networking;
 using Windows.Networking.Sockets;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using UWP_Components;
 
 namespace RPiCameraViewer
 {
@@ -28,6 +31,7 @@ namespace RPiCameraViewer
 		private const int BUFFER_SIZE = 16384;
 		private const int NAL_SIZE_INC = 4096;
 		private const int MAX_READ_ERRORS = 300;
+		private const int WINCODEC_ERR_UNSUPPORTEDOPERATION = unchecked((int)0x88982F81);
 
 		// instance variables
 		private Settings settings = new Settings();
@@ -66,13 +70,15 @@ namespace RPiCameraViewer
 			// configure the media element
 			media.RealTimePlayback = true;
 			media.AreTransportControlsEnabled = false;
+			media.AddVideoEffect(typeof(SnapshotVideoEffect).FullName, true, null);
+			media.Tapped += HandleMediaTapped;
 
 			// create the NAL buffers
-			for (int i = 0; i < 100; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				availableNals.Enqueue(new Nal(NAL_SIZE_INC));
 			}
-#endif
+
 			// create the zoom/pan handler
 			zoomPan = new ZoomPan(border, media);
 
@@ -87,9 +93,7 @@ namespace RPiCameraViewer
 			Storyboard.SetTarget(animation, closeButton);
 			Storyboard.SetTargetProperty(animation, "Opacity");
 			storyboard.Children.Add(animation);
-			storyboard.Begin();
-			media.Tapped += HandleMediaTapped;
-
+#endif
 			// launch the main thread
 			Task.Run(ReadSocketAsync);
 		}
@@ -133,8 +137,56 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Taks a snapshot of the stream.
 		/// </summary>
-		private void HandleSnapshotButtonClick(object sender, RoutedEventArgs e)
+		private async void HandleSnapshotButtonClick(object sender, RoutedEventArgs e)
 		{
+			// create the pictures subfolder
+			StorageLibrary pictures = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+			StorageFolder folder = await pictures.SaveFolder.CreateFolderAsync("RPiCameraViewer", CreationCollisionOption.OpenIfExists);
+
+			// create a unique file name
+			int imageNumber = 1;
+			string fileName = "snapshot_" + imageNumber + ".jpg";
+			while (await folder.TryGetItemAsync(fileName) != null)
+			{
+				imageNumber++;
+				fileName = "snapshot_" + imageNumber + ".jpg";
+			}
+			StorageFile file = await folder.CreateFileAsync(fileName);
+
+			// save the snapshot to the file
+			using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+			{
+				// create the encoder
+				BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+				encoder.SetSoftwareBitmap(SnapshotVideoEffect.GetSnapshot());
+				encoder.IsThumbnailGenerated = true;
+
+				// save the file with a thumbnail
+				try
+				{
+					await encoder.FlushAsync();
+				}
+				catch (Exception ex)
+				{
+					if (ex.HResult == WINCODEC_ERR_UNSUPPORTEDOPERATION)
+					{
+						encoder.IsThumbnailGenerated = false;
+					}
+				}
+
+				// save the file without a thumbnail
+				if (!encoder.IsThumbnailGenerated)
+				{
+					try
+					{
+						await encoder.FlushAsync();
+					}
+					catch (Exception ex)
+					{
+						Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -320,6 +372,7 @@ namespace RPiCameraViewer
 				{
 					media.SetMediaStreamSource(streamSource);
 					media.Play();
+					storyboard.Begin();
 				});
 #endif
 				decoding = true;
