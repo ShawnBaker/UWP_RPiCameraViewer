@@ -10,9 +10,7 @@
     Background="Black">
 
 	<Grid>
-		<Border x:Name="border">
-			<MediaElement x:Name="media" Margin="0,0,0,0"/>
-		</Border>
+		<MediaElement x:Name="media" Margin="0,0,0,0"/>
 		<controls:ImageButton x:Name="closeButton" Margin="0,8,8,0" Click="HandleCloseButtonClick" Canvas.ZIndex="1"
 							  VerticalAlignment="Top" HorizontalAlignment="Right"
 							  NormalStateImageSource="/Assets/close_button/close_button.png"

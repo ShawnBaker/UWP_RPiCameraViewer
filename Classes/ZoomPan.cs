@@ -13,7 +13,6 @@ namespace RPiCameraViewer
 	public class ZoomPan
 	{
 		// instance variables
-		private Border border;
 		private MediaElement mediaElement;
 		private ScaleTransform scaleTransform;
 		private TranslateTransform translateTransform;
@@ -31,7 +30,7 @@ namespace RPiCameraViewer
 		/// Constructor - Configures the media element.
 		/// </summary>
 		/// <param name="mediaElement">Media element to add zoom/pan to.</param>
-		public ZoomPan(Border border, MediaElement mediaElement)
+		public ZoomPan(MediaElement mediaElement)
 		{
 			// save the parameters
 			this.mediaElement = mediaElement;
@@ -104,7 +103,7 @@ namespace RPiCameraViewer
 		{
 			if (isEnabled)
 			{
-				PointerPoint point = e.GetCurrentPoint(border);
+				PointerPoint point = e.GetCurrentPoint(null);
 				if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse || point.Properties.IsLeftButtonPressed)
 				{
 					panStart = pan;
@@ -136,7 +135,7 @@ namespace RPiCameraViewer
 		{
 			if (isCaptured)
 			{
-				PointerPoint point = e.GetCurrentPoint(border);
+				PointerPoint point = e.GetCurrentPoint(null);
 				Point distance = new Point((point.Position.X - panOrigin.X) / zoom, (point.Position.Y - panOrigin.Y) / zoom);
 				SetPan(panStart.X + distance.X, panStart.Y + distance.Y);
 				//Debug.WriteLine("Moved: {0} {1} {2} {3}", distance, point.Position, zoom, pan);

@@ -80,7 +80,7 @@ namespace RPiCameraViewer
 			}
 
 			// create the zoom/pan handler
-			zoomPan = new ZoomPan(border, media);
+			zoomPan = new ZoomPan(media);
 
 			// create the fade out animation
 			storyboard = new Storyboard();
