@@ -1,9 +1,8 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
-using System;
 using Windows.UI.Xaml;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
+using System.Collections.Generic;
 
 namespace RPiCameraViewer
 {
@@ -33,41 +32,15 @@ namespace RPiCameraViewer
 			}
 			versionTextBlock.Text = ver;
 
-			// set the copyright
-			copyrightTextBlock.Text = "Copyright \u00A9 2019 Shawn Baker";
-
-			// set the open source attributions
-			openSourceTextBlock.Inlines.Clear();
-			openSourceTextBlock.Inlines.Add(new Run() { Text = Res.Str.OpenSource });
-			openSourceTextBlock.Inlines.Add(new LineBreak());
-			Hyperlink github = new Hyperlink() { NavigateUri = new Uri(@"https://github.com/ShawnBaker/UWP_RPiCameraViewer") };
-			github.Inlines.Add(new Run() { Text = "github" });
-			Hyperlink mit = new Hyperlink() { NavigateUri = new Uri(@"https://opensource.org/licenses/MIT") };
-			mit.Inlines.Add(new Run() { Text = "MIT" });
-			int githubIndex = Res.Str.GithubMIT.IndexOf("github");
-			int mitIndex = Res.Str.GithubMIT.IndexOf("MIT");
-			bool mitFirst = mitIndex < githubIndex;
-			int first = Math.Min(githubIndex, mitIndex);
-			int second = Math.Max(githubIndex, mitIndex);
-			int index = first;
-			if (index != 0)
+			// set the copyright text
+			var links = new Dictionary<string, string>
 			{
-				openSourceTextBlock.Inlines.Add(new Run() { Text = Res.Str.GithubMIT.Substring(0, index) });
-				index += mitFirst ? 3 : 6;
-			}
-			openSourceTextBlock.Inlines.Add(mitFirst ? mit : github);
-			if (index != second)
-			{
-				int len = second - index;
-				openSourceTextBlock.Inlines.Add(new Run() { Text = Res.Str.GithubMIT.Substring(index, len) });
-				index += len;
-			}
-			openSourceTextBlock.Inlines.Add(mitFirst ? github : mit);
-			index += mitFirst ? 6 : 3;
-			if (index < Res.Str.GithubMIT.Length)
-			{
-				openSourceTextBlock.Inlines.Add(new Run() { Text = Res.Str.GithubMIT.Substring(index) });
-			}
+				{ Res.Str.MartinBerubeText, Res.Str.MartinBerubeLink },
+				{ Res.Str.OxygenTeamText, Res.Str.OxygenTeamLink },
+				{ Res.Str.GithubText, Res.Str.GithubLink },
+				{ Res.Str.MITText, Res.Str.MITLink }
+			};
+			Utils.CreateInlines(copyrightTextBlock, Res.Str.Copyright, links);
 		}
 
 		/// <summary>

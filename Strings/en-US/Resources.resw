@@ -180,9 +180,6 @@
   <data name="ErrorNoCameraName" xml:space="preserve">
     <value>You must enter a camera name.</value>
   </data>
-  <data name="GithubMIT" xml:space="preserve">
-    <value>It's available on github under the MIT License.</value>
-  </data>
   <data name="Help.Label" xml:space="preserve">
     <value>Help</value>
   </data>
@@ -196,7 +193,11 @@ Use the &lt;b&gt;raspivid&lt;/b&gt; program to generate the video stream and the
 
 For example, to stream 1280x720 video at 15 frames per second over port 5001, you would do:
 
-        raspivid -n -ih -t 0 -rot 0 -w 1280 -h 720 -b 1000000 -fps 15 -o - | nc -lkv4 5001</value>
+        raspivid -n -ih -t 0 -rot 0 -w 1280 -h 720 -b 1000000 -fps 15 -o - | nc -lkv4 5001
+
+See the full article for more information:
+
+        {0}</value>
   </data>
   <data name="HelpPage.Text" xml:space="preserve">
     <value>Help</value>
@@ -219,7 +220,7 @@ For example, to stream 1280x720 video at 15 frames per second over port 5001, yo
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="NumNewCamerasFound" xml:space="preserve">
+  <data name="NewCamerasFound" xml:space="preserve">
     <value>New cameras found: {0}</value>
   </data>
   <data name="OkToDeleteAllCameras" xml:space="preserve">
@@ -227,9 +228,6 @@ For example, to stream 1280x720 video at 15 frames per second over port 5001, yo
   </data>
   <data name="OkToDeleteCamera" xml:space="preserve">
     <value>Are you sure you want to delete this camera?</value>
-  </data>
-  <data name="OpenSource" xml:space="preserve">
-    <value>This is an open source program.</value>
   </data>
   <data name="Port.Text" xml:space="preserve">
     <value>Port</value>
@@ -263,5 +261,44 @@ For example, to stream 1280x720 video at 15 frames per second over port 5001, yo
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>Copyright © 2019 Shawn Baker
+
+Raspberry image by {0}
+Camera image by {1}
+
+This is an open source program.
+It's available on {2} under the {3} License.</value>
+  </data>
+  <data name="GithubLink" xml:space="preserve">
+    <value>https://github.com/ShawnBaker/UWP_RPiCameraViewer</value>
+  </data>
+  <data name="GithubText" xml:space="preserve">
+    <value>github</value>
+  </data>
+  <data name="MartinBerubeLink" xml:space="preserve">
+    <value>http://www.how-to-draw-funny-cartoons.com</value>
+  </data>
+  <data name="MartinBerubeText" xml:space="preserve">
+    <value>Martin Bérubé</value>
+  </data>
+  <data name="MITLink" xml:space="preserve">
+    <value>https://opensource.org/licenses/MIT</value>
+  </data>
+  <data name="MITText" xml:space="preserve">
+    <value>MIT</value>
+  </data>
+  <data name="OxygenTeamLink" xml:space="preserve">
+    <value>http://www.oxygen-icons.org</value>
+  </data>
+  <data name="OxygenTeamText" xml:space="preserve">
+    <value>Oxygen Team</value>
+  </data>
+  <data name="StreamingArticleLink" xml:space="preserve">
+    <value>http://frozen.ca/streaming-raw-h-264-from-a-raspberry-pi/</value>
+  </data>
+  <data name="StreamingArticleText" xml:space="preserve">
+    <value>Streaming Raw H.264 From A Raspberry Pi</value>
   </data>
 </root>

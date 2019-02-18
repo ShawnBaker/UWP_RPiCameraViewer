@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Windows.Networking;
 using Windows.Networking.Connectivity;
 using Windows.UI;
 using Windows.UI.Popups;
+using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 
 namespace RPiCameraViewer
 {
@@ -200,6 +203,109 @@ namespace RPiCameraViewer
 			else
 			{
 				noHandler?.Invoke(new UICommand(Res.Str.No));
+			}
+		}
+
+		/// <summary>
+		/// Creates the Inlines to represent some text embedded with links.
+		/// </summary>
+		/// <param name="textBlock">TextBlock control to create the lines within.</param>
+		/// <param name="text">Text with the embedded links.</param>
+		/// <param name="links">Link texts and URLs.</param>
+		public static void CreateInlines(TextBlock textBlock, string text, Dictionary<string, string> links)
+		{
+			// get the indexes of the link texts
+			var indexes = new SortedDictionary<int, InlineLink>();
+			int index = 0;
+			foreach (KeyValuePair<string, string> kvp in links)
+			{
+				string placeholder = "{" + index + "}";
+				indexes.Add(text.IndexOf(placeholder), new InlineLink(placeholder, kvp.Key, kvp.Value));
+				index++;
+			}
+
+			// create the runs, line breaks and hyperlinks
+			index = 0;
+			textBlock.Inlines.Clear();
+			foreach (KeyValuePair<int, InlineLink> kvp in indexes)
+			{
+				if (kvp.Key != -1)
+				{
+					if (kvp.Key != 0)
+					{
+						int len = kvp.Key - index;
+						CreateLines(textBlock, text.Substring(index, len));
+						index += len;
+					}
+					Hyperlink link = new Hyperlink() { NavigateUri = new Uri(kvp.Value.Link) };
+					link.Inlines.Add(new Run() { Text = kvp.Value.Text });
+					textBlock.Inlines.Add(link);
+					index += kvp.Value.Placeholder.Length;
+				}
+			}
+			if (index < text.Length)
+			{
+				CreateLines(textBlock, text.Substring(index));
+			}
+		}
+
+		/// <summary>
+		/// Creates a set of runs and line breaks for a piece of text.
+		/// </summary>
+		/// <param name="textBlock">TextBlock control to create the lines within.</param>
+		/// <param name="text">Text to create the lines from.</param>
+		private static void CreateLines(TextBlock textBlock, string text)
+		{
+			bool first = true;
+			string[] lines = text.Split('\n');
+			foreach (string line in lines)
+			{
+				if (first)
+				{
+					first = false;
+				}
+				else
+				{
+					textBlock.Inlines.Add(new LineBreak());
+				}
+				if (line.Length > 0)
+				{
+					//textBlock.Inlines.Add(new Run() { Text = line });
+					string str = line;
+					int i = str.IndexOf("<b>");
+					while (i != -1)
+					{
+						if (i > 0)
+						{
+							textBlock.Inlines.Add(new Run() { Text = str.Substring(0, i) });
+						}
+						int j = str.IndexOf("</b>", i + 3);
+						textBlock.Inlines.Add(new Run() { Text = str.Substring(i + 3, j - i - 3), FontWeight = FontWeights.Bold });
+						str = str.Substring(j + 4);
+						i = str.IndexOf("<b>");
+					}
+					if (str.Length > 0)
+					{
+						textBlock.Inlines.Add(new Run() { Text = str });
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// An inline link.
+		/// </summary>
+		private class InlineLink
+		{
+			public string Placeholder;
+			public string Text;
+			public string Link;
+
+			public InlineLink(string placeholder, string text, string link)
+			{
+				Placeholder = placeholder;
+				Text = text;
+				Link = link;
 			}
 		}
 	}

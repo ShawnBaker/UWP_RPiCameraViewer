@@ -1,8 +1,7 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
-using Windows.UI.Text;
+using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 
 namespace RPiCameraViewer
 {
@@ -18,24 +17,12 @@ namespace RPiCameraViewer
         {
             InitializeComponent();
 
-			helpTextBlock.Inlines.Clear();
-			string str = Res.Str.HelpMessage;
-			int i = str.IndexOf("<b>");
-			while (i != -1)
+			// set the help text
+			var links = new Dictionary<string, string>
 			{
-				if (i > 0)
-				{
-					helpTextBlock.Inlines.Add(new Run() { Text = str.Substring(0, i) });
-				}
-				int j = str.IndexOf("</b>", i + 3);
-				helpTextBlock.Inlines.Add(new Run() { Text = str.Substring(i + 3, j - i - 3), FontWeight = FontWeights.Bold });
-				str = str.Substring(j + 4);
-				i = str.IndexOf("<b>");
-			}
-			if (str.Length > 0)
-			{
-				helpTextBlock.Inlines.Add(new Run() { Text = str });
-			}
+				{ Res.Str.StreamingArticleText, Res.Str.StreamingArticleLink }
+			};
+			Utils.CreateInlines(helpTextBlock, Res.Str.HelpMessage, links);
 		}
 
 		/// <summary>

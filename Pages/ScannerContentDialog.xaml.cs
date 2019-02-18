@@ -38,7 +38,7 @@ namespace RPiCameraViewer
 
 			// initialize the controls
 			portTextBlock.Text = string.Format(Res.Str.ScanningOnPort, settings.Port);
-			statusTextBlock.Text = string.Format(Res.Str.NumNewCamerasFound, 0);
+			statusTextBlock.Text = string.Format(Res.Str.NewCamerasFound, 0);
 			progressBar.Value = 0;
 			cancelButton.Background = new SolidColorBrush(Utils.PrimaryColor);
 			cancelButton.Foreground = new SolidColorBrush(Utils.TextColor);
@@ -243,7 +243,7 @@ namespace RPiCameraViewer
 			await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
 			{
 				progressBar.Value = numDone;
-				statusTextBlock.Text = string.Format(Res.Str.NumNewCamerasFound, newCameras.Count);
+				statusTextBlock.Text = string.Format(Res.Str.NewCamerasFound, newCameras.Count);
 				if (newCameras.Count > 0)
 				{
 					statusTextBlock.Foreground = new SolidColorBrush(Utils.GoodColor);
