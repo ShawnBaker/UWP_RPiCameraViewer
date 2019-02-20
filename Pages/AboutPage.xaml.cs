@@ -37,6 +37,8 @@ namespace RPiCameraViewer
 			{
 				{ Res.Str.MartinBerubeText, Res.Str.MartinBerubeLink },
 				{ Res.Str.OxygenTeamText, Res.Str.OxygenTeamLink },
+				{ Res.Str.ShaderrowText, Res.Str.ShaderrowLink },
+				{ Res.Str.AutisticLucarioText, Res.Str.AutisticLucarioLink },
 				{ Res.Str.GithubText, Res.Str.GithubLink },
 				{ Res.Str.MITText, Res.Str.MITLink }
 			};

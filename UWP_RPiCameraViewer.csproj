@@ -131,6 +131,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <PRIResource Include="Strings\en-US\Resources.resw" />
+    <None Include="README.md" />
     <None Include="UWP_RPiCameraViewer_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +222,8 @@
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-225.png" />
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-300.png" />
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-400.png" />
+    <Content Include="Assets\sounds\error.mp3" />
+    <Content Include="Assets\sounds\shutter.mp3" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />

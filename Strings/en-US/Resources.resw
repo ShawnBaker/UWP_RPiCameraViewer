@@ -267,9 +267,11 @@ See the full article for more information:
 
 Raspberry image by {0}
 Camera image by {1}
+Shutter sound by {2}
+Error sound by {3}
 
 This is an open source program.
-It's available on {2} under the {3} License.</value>
+It's available on {4} under the {5} License.</value>
   </data>
   <data name="GithubLink" xml:space="preserve">
     <value>https://github.com/ShawnBaker/UWP_RPiCameraViewer</value>
@@ -295,10 +297,22 @@ It's available on {2} under the {3} License.</value>
   <data name="OxygenTeamText" xml:space="preserve">
     <value>Oxygen Team</value>
   </data>
+  <data name="ShaderrowLink" xml:space="preserve">
+    <value>https://freesound.org/people/shaderrow</value>
+  </data>
+  <data name="ShaderrowText" xml:space="preserve">
+    <value>shaderrow</value>
+  </data>
   <data name="StreamingArticleLink" xml:space="preserve">
     <value>http://frozen.ca/streaming-raw-h-264-from-a-raspberry-pi/</value>
   </data>
   <data name="StreamingArticleText" xml:space="preserve">
     <value>Streaming Raw H.264 From A Raspberry Pi</value>
+  </data>
+  <data name="AutisticLucarioLink" xml:space="preserve">
+    <value>https://freesound.org/people/Autistic%20Lucario</value>
+  </data>
+  <data name="AutisticLucarioText" xml:space="preserve">
+    <value>Autistic Lucario</value>
   </data>
 </root>

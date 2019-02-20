@@ -24,6 +24,8 @@ namespace RPiCameraViewer
 		{
 			public static string AllNetworks { get { return res.GetString("AllNetworks"); } }
 			public static string AppName { get { return res.GetString("AppName"); } }
+			public static string AutisticLucarioLink { get { return res.GetString("AutisticLucarioLink"); } }
+			public static string AutisticLucarioText { get { return res.GetString("AutisticLucarioText"); } }
 			public static string Cancel { get { return res.GetString("Cancel"); } }
 			public static string Copyright { get { return res.GetString("Copyright"); } }
 			public static string Done { get { return res.GetString("Done"); } }
@@ -49,6 +51,8 @@ namespace RPiCameraViewer
 			public static string OxygenTeamText { get { return res.GetString("OxygenTeamText"); } }
 			public static string ScanningForCameras { get { return res.GetString("ScanningForCameras"); } }
 			public static string ScanningOnPort { get { return res.GetString("ScanningOnPort"); } }
+			public static string ShaderrowLink { get { return res.GetString("ShaderrowLink"); } }
+			public static string ShaderrowText { get { return res.GetString("ShaderrowText"); } }
 			public static string StreamingArticleLink { get { return res.GetString("StreamingArticleLink"); } }
 			public static string StreamingArticleText { get { return res.GetString("StreamingArticleText"); } }
 			public static string Version { get { return res.GetString("Version"); } }

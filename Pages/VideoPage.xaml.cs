@@ -1,5 +1,4 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
-#define ENABLE_DECODING
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -41,13 +40,12 @@ namespace RPiCameraViewer
 		private bool decoding = false;
 		private ZoomPan zoomPan;
 		private Storyboard storyboard;
-#if ENABLE_DECODING
 		private MediaStreamSource streamSource = null;
 		private MediaStreamSourceSampleRequest request = null;
 		private MediaStreamSourceSampleRequestDeferral deferral = null;
 		private Queue<Nal> availableNals = new Queue<Nal>();
 		private Queue<Nal> usedNals = new Queue<Nal>();
-#endif
+
 		/// <summary>
 		/// Constructor - Initializes the controls.
 		/// </summary>
@@ -66,7 +64,7 @@ namespace RPiCameraViewer
 			// get the camera, display its name
 			camera = e.Parameter as Camera;
 			nameTextBlock.Text = camera.Name;
-#if ENABLE_DECODING
+
 			// configure the media element
 			media.RealTimePlayback = true;
 			media.AreTransportControlsEnabled = false;
@@ -93,7 +91,7 @@ namespace RPiCameraViewer
 			Storyboard.SetTarget(animation, closeButton);
 			Storyboard.SetTargetProperty(animation, "Opacity");
 			storyboard.Children.Add(animation);
-#endif
+
 			// launch the main thread
 			Task.Run(ReadSocketAsync);
 		}
@@ -112,6 +110,14 @@ namespace RPiCameraViewer
 		/// Reenables and shows the controls when the video is tapped.
 		/// </summary>
 		private void HandleMediaTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+		{
+			StartFadeout();
+		}
+
+		/// <summary>
+		/// Shows the controls and starts the fade out animation
+		/// </summary>
+		private void StartFadeout()
 		{
 			storyboard.Stop();
 			closeButton.Opacity = 1;
@@ -142,14 +148,17 @@ namespace RPiCameraViewer
 			// create the pictures subfolder
 			StorageLibrary pictures = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
 			StorageFolder folder = await pictures.SaveFolder.CreateFolderAsync("RPiCameraViewer", CreationCollisionOption.OpenIfExists);
+			folder = await folder.CreateFolderAsync(camera.Network, CreationCollisionOption.OpenIfExists);
+			folder = await folder.CreateFolderAsync(camera.Name, CreationCollisionOption.OpenIfExists);
 
 			// create a unique file name
-			int imageNumber = 1;
-			string fileName = "snapshot_" + imageNumber + ".jpg";
+			int imageNumber = 0;
+			string date = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+			string fileName = date + ".jpg";
 			while (await folder.TryGetItemAsync(fileName) != null)
 			{
 				imageNumber++;
-				fileName = "snapshot_" + imageNumber + ".jpg";
+				fileName = date + "_" + imageNumber + ".jpg";
 			}
 			StorageFile file = await folder.CreateFileAsync(fileName);
 
@@ -165,12 +174,17 @@ namespace RPiCameraViewer
 				try
 				{
 					await encoder.FlushAsync();
+					await Utils.PlaySoundAsync("shutter");
 				}
 				catch (Exception ex)
 				{
 					if (ex.HResult == WINCODEC_ERR_UNSUPPORTEDOPERATION)
 					{
 						encoder.IsThumbnailGenerated = false;
+					}
+					else
+					{
+						await Utils.PlaySoundAsync("error");
 					}
 				}
 
@@ -180,13 +194,16 @@ namespace RPiCameraViewer
 					try
 					{
 						await encoder.FlushAsync();
+						await Utils.PlaySoundAsync("shutter");
 					}
 					catch (Exception ex)
 					{
 						Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
+						await Utils.PlaySoundAsync("error");
 					}
 				}
 			}
+			StartFadeout();
 		}
 
 		/// <summary>
@@ -195,11 +212,7 @@ namespace RPiCameraViewer
 		/// <returns>The asynchronous task.</returns>
 		private async Task ReadSocketAsync()
 		{
-#if ENABLE_DECODING
 			Nal nal = availableNals.Dequeue();
-#else
-			Nal nal = new Nal(NAL_SIZE_INC);
-#endif
 			int numZeroes = 0;
 			int numReadErrors = 0;
 			bool gotHeader = false;
@@ -222,7 +235,6 @@ namespace RPiCameraViewer
 				{
 					uint len = await reader.LoadAsync(BUFFER_SIZE);
 					//Debug.WriteLine("numBytes = {0}", len);
-#if ENABLE_DECODING
 					if (nal == null)
 					{
 						lock (availableNals)
@@ -231,6 +243,8 @@ namespace RPiCameraViewer
 							nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
 						}
 					}
+
+					// process the input buffer
 					if (nal == null)
 					{
 						if (len > 0)
@@ -238,10 +252,7 @@ namespace RPiCameraViewer
 							reader.ReadBuffer(len);
 						}
 					}
-					else
-#endif
-					// process the input buffer
-					if (len > 0)
+					else if (len > 0)
 					{
 						numReadErrors = 0;
 						for (int i = 0; i < len && nal != null && !isCancelled; i++)
@@ -272,7 +283,6 @@ namespace RPiCameraViewer
 											nal.Buffer.Length = (uint)nal.Stream.Length - 4;
 											int nalType = ProcessNal(nal);
 											if (isCancelled) break;
-#if ENABLE_DECODING
 											if (nalType != -1)
 											{
 												lock (availableNals)
@@ -281,7 +291,6 @@ namespace RPiCameraViewer
 													nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
 												}
 											}
-#endif
 										}
 										if (nal != null)
 										{
@@ -353,7 +362,7 @@ namespace RPiCameraViewer
 				nal.Buffer.CopyTo(sps);
 				SpsParser parser = new SpsParser(sps, (int)nal.Buffer.Length);
 				//Debug.WriteLine(String.Format("SPS: {0}x{1} @ {2}", parser.width, parser.height, parser.fps));
-#if ENABLE_DECODING
+
 				VideoEncodingProperties properties = VideoEncodingProperties.CreateH264();
 				properties.ProfileId = H264ProfileIds.High;
 				properties.Width = (uint)parser.width;
@@ -374,10 +383,9 @@ namespace RPiCameraViewer
 					media.Play();
 					storyboard.Begin();
 				});
-#endif
 				decoding = true;
 			}
-#if ENABLE_DECODING
+
 			// queue the frame
 			if (nalType > 0 && decoding)
 			{
@@ -403,10 +411,11 @@ namespace RPiCameraViewer
 					}
 				}
 			}
-#endif
+
+			// return the NAL type
 			return decoding ? nalType : -1;
 		}
-#if ENABLE_DECODING
+
 		/// <summary>
 		/// Dequeues a NAL and gives it to the decoder.
 		/// </summary>
@@ -435,6 +444,5 @@ namespace RPiCameraViewer
 				deferral = args.Request.GetDeferral();
 			}
 		}
-#endif
 	}
 }

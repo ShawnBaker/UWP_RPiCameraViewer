@@ -1,9 +1,13 @@
-﻿using System;
+﻿// Copyright © 2019 Shawn Baker using the MIT License.
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Windows.Networking;
 using Windows.Networking.Connectivity;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.Text;
@@ -23,6 +27,9 @@ namespace RPiCameraViewer
 		public static string HostnameRegexString = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
 		public static Regex IpAddressRegex = new Regex(IpAddressRegexString);
 		public static Regex HostnameRegex = new Regex(HostnameRegexString);
+
+		// static variables
+		private static MediaElement soundPlayer = new MediaElement();
 
 		/// <summary>
 		/// Gets the name of the network that this computer is on.
@@ -203,6 +210,29 @@ namespace RPiCameraViewer
 			else
 			{
 				noHandler?.Invoke(new UICommand(Res.Str.No));
+			}
+		}
+
+		/// <summary>
+		/// Plays a sound from the Assets\sounds folder.
+		/// </summary>
+		/// <param name="name">Name of the sound to be played.</param>
+		public static async Task PlaySoundAsync(string name)
+		{
+			try
+			{
+				// open the file
+				StorageFolder sounds = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFolderAsync("Assets\\sounds");
+				StorageFile file = await sounds.GetFileAsync(name + ".mp3");
+				var stream = await file.OpenAsync(FileAccessMode.Read);
+
+				// play the sound
+				soundPlayer.SetSource(stream, file.ContentType);
+				soundPlayer.Play();
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
 			}
 		}
 
