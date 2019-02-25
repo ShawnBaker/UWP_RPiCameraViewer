@@ -177,6 +177,7 @@ namespace RPiCameraViewer
 		/// <param name="message">Error message to be displayed.</param>
 		public static async void ErrorAsync(string message)
 		{
+			Log.Error("ErrorAsync: " + message);
 			ContentDialog cd = new ContentDialog()
 			{
 				Title = Res.Str.Error,
@@ -194,6 +195,7 @@ namespace RPiCameraViewer
 		/// <param name="noHandler">Method to be called when No is pressed.</param>
 		public static async void YesNoAsync(string message, UICommandInvokedHandler yesHandler, UICommandInvokedHandler noHandler = null)
 		{
+			Log.Error("YesNoAsync: " + message);
 			ContentDialog cd = new ContentDialog()
 			{
 				Title = Res.Str.AppName,
@@ -232,7 +234,7 @@ namespace RPiCameraViewer
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
+				Log.Error("PlaySoundAsync EXCEPTION: {0}", ex.Message);
 			}
 		}
 
@@ -247,11 +249,14 @@ namespace RPiCameraViewer
 			// get the indexes of the link texts
 			var indexes = new SortedDictionary<int, InlineLink>();
 			int index = 0;
-			foreach (KeyValuePair<string, string> kvp in links)
+			if (links != null)
 			{
-				string placeholder = "{" + index + "}";
-				indexes.Add(text.IndexOf(placeholder), new InlineLink(placeholder, kvp.Key, kvp.Value));
-				index++;
+				foreach (KeyValuePair<string, string> kvp in links)
+				{
+					string placeholder = "{" + index + "}";
+					indexes.Add(text.IndexOf(placeholder), new InlineLink(placeholder, kvp.Key, kvp.Value));
+					index++;
+				}
 			}
 
 			// create the runs, line breaks and hyperlinks

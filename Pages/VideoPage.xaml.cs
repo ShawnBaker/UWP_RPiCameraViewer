@@ -15,6 +15,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using UWP_Components;
@@ -47,22 +48,34 @@ namespace RPiCameraViewer
 		private Queue<Nal> usedNals = new Queue<Nal>();
 
 		/// <summary>
-		/// Constructor - Initializes the controls.
+		/// Constructor - Initializes the page.
 		/// </summary>
 		public VideoPage()
 		{
 			InitializeComponent();
+			Loaded += HandleLoaded;
 		}
 
 		/// <summary>
-		/// Initializes the media element and starts the socket reading thread.
+		/// Get the camera parameter.
 		/// </summary>
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
+			Log.Info("+VideoPage.OnNavigatedTo");
 			base.OnNavigatedTo(e);
 
-			// get the camera, display its name
+			// get the camera
 			camera = e.Parameter as Camera;
+			Log.Info("-VideoPage.OnNavigatedTo");
+		}
+
+		/// <summary>
+		/// Initializes the controls.
+		/// </summary>
+		private void HandleLoaded(object sender, RoutedEventArgs e)
+		{
+			// display the camera name
+			Log.Info("+VideoPage.HandleLoaded: {0}", camera.ToString());
 			nameTextBlock.Text = camera.Name;
 
 			// configure the media element
@@ -94,6 +107,7 @@ namespace RPiCameraViewer
 
 			// launch the main thread
 			Task.Run(ReadSocketAsync);
+			Log.Info("-VideoPage.HandleLoaded");
 		}
 
 		/// <summary>
@@ -109,7 +123,7 @@ namespace RPiCameraViewer
 		/// <summary>
 		/// Reenables and shows the controls when the video is tapped.
 		/// </summary>
-		private void HandleMediaTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+		private void HandleMediaTapped(object sender, TappedRoutedEventArgs e)
 		{
 			StartFadeout();
 		}
@@ -130,6 +144,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleCloseButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("VideoPage.HandleCloseButtonClick");
 			if (isCancelled)
 			{
 				Frame.GoBack();
@@ -146,6 +161,7 @@ namespace RPiCameraViewer
 		private async void HandleSnapshotButtonClick(object sender, RoutedEventArgs e)
 		{
 			// create the pictures subfolder
+			Log.Info("+VideoPage.HandleSnapshotButtonClick");
 			StorageLibrary pictures = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
 			StorageFolder folder = await pictures.SaveFolder.CreateFolderAsync("RPiCameraViewer", CreationCollisionOption.OpenIfExists);
 			folder = await folder.CreateFolderAsync(camera.Network, CreationCollisionOption.OpenIfExists);
@@ -161,6 +177,7 @@ namespace RPiCameraViewer
 				fileName = date + "_" + imageNumber + ".jpg";
 			}
 			StorageFile file = await folder.CreateFileAsync(fileName);
+			Log.Info("VideoPage.HandleSnapshotButtonClick: {0}", fileName);
 
 			// save the snapshot to the file
 			using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
@@ -175,9 +192,11 @@ namespace RPiCameraViewer
 				{
 					await encoder.FlushAsync();
 					await Utils.PlaySoundAsync("shutter");
+					Log.Info("VideoPage.HandleSnapshotButtonClick: with thumbnail");
 				}
 				catch (Exception ex)
 				{
+					Log.Error("VideoPage.HandleSnapshotButtonClick EXCEPTION1: {0}", ex.Message);
 					if (ex.HResult == WINCODEC_ERR_UNSUPPORTEDOPERATION)
 					{
 						encoder.IsThumbnailGenerated = false;
@@ -195,15 +214,18 @@ namespace RPiCameraViewer
 					{
 						await encoder.FlushAsync();
 						await Utils.PlaySoundAsync("shutter");
+						Log.Info("VideoPage.HandleSnapshotButtonClick: without thumbnail");
 					}
 					catch (Exception ex)
 					{
+						Log.Error("VideoPage.HandleSnapshotButtonClick EXCEPTION2: {0}", ex.Message);
 						Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
 						await Utils.PlaySoundAsync("error");
 					}
 				}
 			}
 			StartFadeout();
+			Log.Info("-VideoPage.HandleSnapshotButtonClick");
 		}
 
 		/// <summary>
@@ -212,6 +234,7 @@ namespace RPiCameraViewer
 		/// <returns>The asynchronous task.</returns>
 		private async Task ReadSocketAsync()
 		{
+			Log.Info("+VideoPage.ReadSocketAsync");
 			Nal nal = availableNals.Dequeue();
 			int numZeroes = 0;
 			int numReadErrors = 0;
@@ -234,12 +257,12 @@ namespace RPiCameraViewer
 				while (!isCancelled)
 				{
 					uint len = await reader.LoadAsync(BUFFER_SIZE);
-					//Debug.WriteLine("numBytes = {0}", len);
+					Log.Verbose("numBytes = {0}", len);
 					if (nal == null)
 					{
 						lock (availableNals)
 						{
-							//Debug.WriteLine("availableNals.Dequeue: {0}", availableNals.Count);
+							Log.Verbose("availableNals.Dequeue: {0}", availableNals.Count);
 							nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
 						}
 					}
@@ -287,7 +310,7 @@ namespace RPiCameraViewer
 											{
 												lock (availableNals)
 												{
-													//Debug.WriteLine("availableNals.Dequeue: {0}", availableNals.Count);
+													Log.Verbose("availableNals.Dequeue: {0}", availableNals.Count);
 													nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
 												}
 											}
@@ -303,7 +326,7 @@ namespace RPiCameraViewer
 										}
 										else
 										{
-											//Debug.WriteLine("null");
+											Log.Verbose("null");
 										}
 									}
 									gotHeader = true;
@@ -333,9 +356,10 @@ namespace RPiCameraViewer
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
+				Log.Error("EXCEPTION: {0}", ex.ToString());
 				return;
 			}
+			Log.Info("-VideoPage.ReadSocketAsync");
 		}
 
 		/// <summary>
@@ -353,7 +377,7 @@ namespace RPiCameraViewer
 				nal.Buffer.CopyTo(0, header, 0, 5);
 				nalType = (header[0] == 0 && header[1] == 0 && header[2] == 0 && header[3] == 1) ? (header[4] & 0x1F) : -1;
 			}
-			//Debug.WriteLine(String.Format("NAL: type = {0}, len = {1}", nalType, nal.Buffer.Length));
+			Log.Verbose("NAL: type = {0}, len = {1}", nalType, nal.Buffer.Length);
 
 			// process the first SPS record we encounter
 			if (nalType == 7 && !decoding)
@@ -361,7 +385,7 @@ namespace RPiCameraViewer
 				byte[] sps = new byte[nal.Buffer.Length];
 				nal.Buffer.CopyTo(sps);
 				SpsParser parser = new SpsParser(sps, (int)nal.Buffer.Length);
-				//Debug.WriteLine(String.Format("SPS: {0}x{1} @ {2}", parser.width, parser.height, parser.fps));
+				Log.Verbose("SPS: {0}x{1} @ {2}", parser.width, parser.height, parser.fps);
 
 				VideoEncodingProperties properties = VideoEncodingProperties.CreateH264();
 				properties.ProfileId = H264ProfileIds.High;
@@ -394,17 +418,17 @@ namespace RPiCameraViewer
 					request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0));
 					lock (availableNals)
 					{
-						//Debug.WriteLine("availableNals.Enqueue");
+						Log.Verbose("availableNals.Enqueue");
 						availableNals.Enqueue(nal);
 					}
 					deferral.Complete();
 					deferral = null;
 					request = null;
-					//Debug.WriteLine("Deferral Complete");
+					Log.Verbose("Deferral Complete");
 				}
 				else
 				{
-					//Debug.WriteLine("usedNals.Enqueue");
+					Log.Verbose("usedNals.Enqueue");
 					lock (usedNals)
 					{
 						usedNals.Enqueue(nal);
@@ -421,11 +445,11 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleSampleRequested(MediaStreamSource sender, MediaStreamSourceSampleRequestedEventArgs args)
 		{
-			//Debug.WriteLine("HandleSampleRequested");
+			Log.Verbose("HandleSampleRequested");
 			Nal nal;
 			lock (usedNals)
 			{
-				//Debug.WriteLine("usedNals.Dequeue: {0}", usedNals.Count);
+				Log.Verbose("usedNals.Dequeue: {0}", usedNals.Count);
 				nal = (usedNals.Count > 0) ? usedNals.Dequeue() : null;
 			}
 			if (nal != null)
@@ -433,13 +457,13 @@ namespace RPiCameraViewer
 				args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0));
 				lock (availableNals)
 				{
-					//Debug.WriteLine("availableNals.Enqueue");
+					Log.Verbose("availableNals.Enqueue");
 					availableNals.Enqueue(nal);
 				}
 			}
 			else
 			{
-				//Debug.WriteLine("Deferred");
+				Log.Verbose("Deferred");
 				request = args.Request;
 				deferral = args.Request.GetDeferral();
 			}

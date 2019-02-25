@@ -12,13 +12,21 @@ namespace RPiCameraViewer
     public sealed partial class AboutPage : Page
     {
 		/// <summary>
-		/// Constructor - Initializes the controls.
+		/// Constructor - Initializes the page.
 		/// </summary>
 		public AboutPage()
-        {
-            InitializeComponent();
+		{
+			InitializeComponent();
+			Loaded += HandleLoaded;
+		}
 
+		/// <summary>
+		/// Initializes the controls.
+		/// </summary>
+		private void HandleLoaded(object sender, RoutedEventArgs e)
+		{
 			// set the name and version
+			Log.Info("+AboutPage");
 			nameTextBlock.Text = Res.Str.AppName;
 			PackageVersion version = Package.Current.Id.Version;
 			string ver = string.Format("{0} {1}.{2}", Res.Str.Version, version.Major, version.Minor);
@@ -31,6 +39,7 @@ namespace RPiCameraViewer
 				ver += "." + version.Revision.ToString();
 			}
 			versionTextBlock.Text = ver;
+			Log.Info("AboutPage: {0}", ver);
 
 			// set the copyright text
 			var links = new Dictionary<string, string>
@@ -43,6 +52,7 @@ namespace RPiCameraViewer
 				{ Res.Str.MITText, Res.Str.MITLink }
 			};
 			Utils.CreateInlines(copyrightTextBlock, Res.Str.Copyright, links);
+			Log.Info("-AboutPage");
 		}
 
 		/// <summary>
@@ -50,6 +60,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleBackButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("AboutPage.HandleBackButtonClick");
 			Frame.GoBack();
 		}
 	}

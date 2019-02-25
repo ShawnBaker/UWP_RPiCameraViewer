@@ -78,5 +78,14 @@ namespace RPiCameraViewer
 			}
 			settings.Values["Cameras"] = camerasString;
 		}
+
+		/// <summary>
+		/// Creates a string representing the settings.
+		/// </summary>
+		/// <returns>A string representing the settings.</returns>
+		public override string ToString()
+		{
+			return string.Format("{0} {1} {2} {3}", CameraName, ScanTimeout, Port, ShowAllNetworks);
+		}
 	}
 }

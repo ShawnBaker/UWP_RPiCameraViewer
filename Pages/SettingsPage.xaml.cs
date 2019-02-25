@@ -13,16 +13,25 @@ namespace RPiCameraViewer
 		private Settings settings = new Settings();
 
 		/// <summary>
-		/// Constructor - Initializes the controls.
+		/// Constructor - Initializes the page.
 		/// </summary>
 		public SettingsPage()
         {
             InitializeComponent();
+			Loaded += HandleLoaded;
+		}
 
+		/// <summary>
+		/// Initializes the controls.
+		/// </summary>
+		private void HandleLoaded(object sender, RoutedEventArgs e)
+		{
+			Log.Info("+SettingsPage.HandleLoaded");
 			nameTextBox.Text = settings.CameraName;
 			timeoutTextBox.Text = settings.ScanTimeout.ToString();
 			portTextBox.Text = settings.Port.ToString();
 			showAllNetworksToggle.IsOn = settings.ShowAllNetworks;
+			Log.Info("-SettingsPage.HandleLoaded");
 		}
 
 		/// <summary>
@@ -31,6 +40,7 @@ namespace RPiCameraViewer
 		private void HandleSaveButtonClick(object sender, RoutedEventArgs e)
 		{
 			// get the camera name
+			Log.Info("+SettingsPage.HandleSaveButtonClick");
 			string name = nameTextBox.Text.Trim();
 			if (name.Length == 0)
 			{
@@ -71,6 +81,7 @@ namespace RPiCameraViewer
 			}
 
 			// save the settings
+			Log.Info("SettingsPage.HandleSaveButtonClick: {0} {1} {2} {3}", name, timeout, port, showAllNetworksToggle.IsOn);
 			settings.CameraName = name;
 			settings.ScanTimeout = timeout;
 			settings.Port = port;
@@ -79,6 +90,7 @@ namespace RPiCameraViewer
 
 			// return to the previous page
 			Frame.GoBack();
+			Log.Info("-SettingsPage.HandleSaveButtonClick");
 		}
 
 		/// <summary>
@@ -86,6 +98,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleCancelButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("HelpPage.HandleCancelButtonClick");
 			Frame.GoBack();
 		}
 	}

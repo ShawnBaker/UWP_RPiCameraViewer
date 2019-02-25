@@ -54,6 +54,15 @@ namespace RPiCameraViewer
 				return addr;
 			}
 		}
+
+		/// <summary>
+		/// Creates a string representing the camera.
+		/// </summary>
+		/// <returns>A string representing the camera.</returns>
+		public override string ToString()
+		{
+			return string.Format("{0} {1} {2} {3}", Network, Name, Address, Port);
+		}
 	}
 
 	public class Cameras : ObservableCollection<Camera>

@@ -95,6 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\Log.cs" />
     <Compile Include="Classes\Nal.cs" />
     <Compile Include="Classes\Camera.cs" />
     <Compile Include="Classes\Settings.cs" />
@@ -103,6 +104,9 @@
     <Compile Include="Classes\ZoomPan.cs" />
     <Compile Include="Pages\CameraPage.xaml.cs">
       <DependentUpon>CameraPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\LogFilesPage.xaml.cs">
+      <DependentUpon>LogFilesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ScannerContentDialog.xaml.cs">
       <DependentUpon>ScannerContentDialog.xaml</DependentUpon>
@@ -306,6 +310,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\LogFilesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\ScannerContentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -321,7 +329,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.8</Version>
+      <Version>6.2.3</Version>
     </PackageReference>
     <PackageReference Include="WinRTXamlToolkit.UWP">
       <Version>2.3.0</Version>

@@ -11,52 +11,56 @@ namespace RPiCameraViewer
 		// localized strings
 		public static class Error
 		{
-			public static string BadAddress { get { return res.GetString("ErrorBadAddress"); } }
-			public static string BadPort { get { return res.GetString("ErrorBadPort"); } }
-			public static string BadScanTimeout { get { return res.GetString("ErrorBadScanTimeout"); } }
-			public static string NameAlreadyExists { get { return res.GetString("ErrorNameAlreadyExists"); } }
-			public static string NoAddress { get { return res.GetString("ErrorNoAddress"); } }
-			public static string NoCameraName { get { return res.GetString("ErrorNoCameraName"); } }
+			public static string BadAddress => res.GetString("ErrorBadAddress");
+			public static string BadPort => res.GetString("ErrorBadPort");
+			public static string BadScanTimeout => res.GetString("ErrorBadScanTimeout");
+			public static string CouldntCreateZipFile => res.GetString("CouldntCreateZipFile");
+			public static string NameAlreadyExists => res.GetString("ErrorNameAlreadyExists");
+			public static string NoAddress => res.GetString("ErrorNoAddress");
+			public static string NoCameraName => res.GetString("ErrorNoCameraName");
 		}
 
 		// localized strings
 		public static class Str
 		{
-			public static string AllNetworks { get { return res.GetString("AllNetworks"); } }
-			public static string AppName { get { return res.GetString("AppName"); } }
-			public static string AutisticLucarioLink { get { return res.GetString("AutisticLucarioLink"); } }
-			public static string AutisticLucarioText { get { return res.GetString("AutisticLucarioText"); } }
-			public static string Cancel { get { return res.GetString("Cancel"); } }
-			public static string Copyright { get { return res.GetString("Copyright"); } }
-			public static string Done { get { return res.GetString("Done"); } }
-			public static string EditCamera { get { return res.GetString("EditCamera"); } }
-			public static string Error { get { return res.GetString("Error"); } }
-			public static string Camera { get { return res.GetString("Camera"); } }
-			public static string GithubLink { get { return res.GetString("GithubLink"); } }
-			public static string GithubText { get { return res.GetString("GithubText"); } }
-			public static string HelpMessage { get { return res.GetString("HelpMessage"); } }
-			public static string MartinBerubeLink { get { return res.GetString("MartinBerubeLink"); } }
-			public static string MartinBerubeText { get { return res.GetString("MartinBerubeText"); } }
-			public static string MITLink { get { return res.GetString("MITLink"); } }
-			public static string MITText { get { return res.GetString("MITText"); } }
-			public static string NetworkName { get { return res.GetString("NetworkName"); } }
-			public static string NewCamera { get { return res.GetString("NewCamera"); } }
-			public static string NewCamerasFound { get { return res.GetString("NewCamerasFound"); } }
-			public static string No { get { return res.GetString("No"); } }
-			public static string NoNetwork { get { return res.GetString("NoNetwork"); } }
-			public static string OK { get { return res.GetString("OK"); } }
-			public static string OkToDeleteAllCameras { get { return res.GetString("OkToDeleteAllCameras"); } }
-			public static string OkToDeleteCamera { get { return res.GetString("OkToDeleteCamera"); } }
-			public static string OxygenTeamLink { get { return res.GetString("OxygenTeamLink"); } }
-			public static string OxygenTeamText { get { return res.GetString("OxygenTeamText"); } }
-			public static string ScanningForCameras { get { return res.GetString("ScanningForCameras"); } }
-			public static string ScanningOnPort { get { return res.GetString("ScanningOnPort"); } }
-			public static string ShaderrowLink { get { return res.GetString("ShaderrowLink"); } }
-			public static string ShaderrowText { get { return res.GetString("ShaderrowText"); } }
-			public static string StreamingArticleLink { get { return res.GetString("StreamingArticleLink"); } }
-			public static string StreamingArticleText { get { return res.GetString("StreamingArticleText"); } }
-			public static string Version { get { return res.GetString("Version"); } }
-			public static string Yes { get { return res.GetString("Yes"); } }
+			public static string AllNetworks => res.GetString("AllNetworks");
+			public static string AppName => res.GetString("AppName");
+			public static string AttachmentWarning => res.GetString("AttachmentWarning");
+			public static string AutisticLucarioLink => res.GetString("AutisticLucarioLink");
+			public static string AutisticLucarioText => res.GetString("AutisticLucarioText");
+			public static string Cancel => res.GetString("Cancel");
+			public static string Copyright => res.GetString("Copyright");
+			public static string Done => res.GetString("Done");
+			public static string EditCamera => res.GetString("EditCamera");
+			public static string Error => res.GetString("Error");
+			public static string Camera => res.GetString("Camera");
+			public static string GithubLink => res.GetString("GithubLink");
+			public static string GithubText => res.GetString("GithubText");
+			public static string HelpMessage => res.GetString("HelpMessage");
+			public static string LogFiles => res.GetString("LogFilesSubject");
+			public static string MartinBerubeLink => res.GetString("MartinBerubeLink");
+			public static string MartinBerubeText => res.GetString("MartinBerubeText");
+			public static string MITLink => res.GetString("MITLink");
+			public static string MITText => res.GetString("MITText");
+			public static string NetworkName => res.GetString("NetworkName");
+			public static string NewCamera => res.GetString("NewCamera");
+			public static string NewCamerasFound => res.GetString("NewCamerasFound");
+			public static string No => res.GetString("No");
+			public static string NoNetwork => res.GetString("NoNetwork");
+			public static string OK => res.GetString("OK");
+			public static string OkToClearLogs => res.GetString("OkToClearLogs");
+			public static string OkToDeleteAllCameras => res.GetString("OkToDeleteAllCameras");
+			public static string OkToDeleteCamera => res.GetString("OkToDeleteCamera");
+			public static string OxygenTeamLink => res.GetString("OxygenTeamLink");
+			public static string OxygenTeamText => res.GetString("OxygenTeamText");
+			public static string ScanningForCameras => res.GetString("ScanningForCameras");
+			public static string ScanningOnPort => res.GetString("ScanningOnPort");
+			public static string ShaderrowLink => res.GetString("ShaderrowLink");
+			public static string ShaderrowText => res.GetString("ShaderrowText");
+			public static string StreamingArticleLink => res.GetString("StreamingArticleLink");
+			public static string StreamingArticleText => res.GetString("StreamingArticleText");
+			public static string Version => res.GetString("Version");
+			public static string Yes => res.GetString("Yes");
 		}
 	}
 }

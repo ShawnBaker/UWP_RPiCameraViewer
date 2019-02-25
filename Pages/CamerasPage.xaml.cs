@@ -4,7 +4,6 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 using WinRTXamlToolkit.Controls;
 
 namespace RPiCameraViewer
@@ -24,15 +23,15 @@ namespace RPiCameraViewer
 		public CamerasPage()
         {
             InitializeComponent();
+			Loaded += HandleLoaded;
 		}
 
 		/// <summary>
 		/// Initializes the controls.
 		/// </summary>
-		protected override void OnNavigatedTo(NavigationEventArgs e)
+		private void HandleLoaded(object sender, RoutedEventArgs e)
 		{
-			base.OnNavigatedTo(e);
-
+			Log.Info("+CamerasPage.HandleLoaded");
 			if (settings.ShowAllNetworks)
 			{
 				networkTextBlock.Text = Res.Str.AllNetworks;
@@ -51,6 +50,7 @@ namespace RPiCameraViewer
 			}
 
 			camerasListView.ItemsSource = settings.Cameras;
+			Log.Info("-CamerasPage.HandleLoaded");
 		}
 
 		/// <summary>
@@ -58,6 +58,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleDetailsButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("CamerasPage.HandleLoaded");
 			ImageButton button = (ImageButton)sender;
 			Camera camera = button.Tag as Camera;
 			Frame.Navigate(typeof(CameraPage), camera, new DrillInNavigationTransitionInfo());
@@ -68,6 +69,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleDeleteButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("CamerasPage.HandleDeleteButtonClick");
 			ImageButton button = (ImageButton)sender;
 			camera = button.Tag as Camera;
 			Utils.YesNoAsync(Res.Str.OkToDeleteCamera, DeleteYesHandler, null);
@@ -79,6 +81,7 @@ namespace RPiCameraViewer
 		/// <param name="command">Command button.</param>
 		private void DeleteYesHandler(IUICommand command)
 		{
+			Log.Info("CamerasPage.DeleteYesHandler: {0}", camera.Name);
 			settings.Cameras.Remove(camera);
 			settings.Save();
 		}
@@ -88,6 +91,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleAddButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("CamerasPage.HandleAddButtonClick");
 			Frame.Navigate(typeof(CameraPage), null, new DrillInNavigationTransitionInfo());
 		}
 
@@ -96,6 +100,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleDeleteAllButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("CamerasPage.HandleDeleteAllButtonClick");
 			Utils.YesNoAsync(Res.Str.OkToDeleteAllCameras, DeleteAllYesHandler, null);
 		}
 
@@ -105,6 +110,7 @@ namespace RPiCameraViewer
 		/// <param name="command">Command button.</param>
 		private void DeleteAllYesHandler(IUICommand command)
 		{
+			Log.Info("CamerasPage.DeleteAllYesHandler");
 			settings.Cameras.Clear();
 			settings.Save();
 		}
@@ -114,24 +120,9 @@ namespace RPiCameraViewer
 		/// </summary>
 		private async void HandleScanButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("CamerasPage.HandleScanButtonClick");
 			ScannerContentDialog scannerDialog = new ScannerContentDialog(settings);
 			await scannerDialog.ShowAsync();
-		}
-
-		/// <summary>
-		/// Displays the about page.
-		/// </summary>
-		private void HandleAboutButtonClick(object sender, RoutedEventArgs e)
-		{
-			Frame.Navigate(typeof(AboutPage), null, new DrillInNavigationTransitionInfo());
-		}
-
-		/// <summary>
-		/// Displays the help page.
-		/// </summary>
-		private void HandleHelpButtonClick(object sender, RoutedEventArgs e)
-		{
-			Frame.Navigate(typeof(HelpPage), null, new DrillInNavigationTransitionInfo());
 		}
 
 		/// <summary>
@@ -139,7 +130,35 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleSettingsButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("CamerasPage.HandleSettingsButtonClick");
 			Frame.Navigate(typeof(SettingsPage), null, new DrillInNavigationTransitionInfo());
+		}
+
+		/// <summary>
+		/// Displays the help page.
+		/// </summary>
+		private void HandleHelpButtonClick(object sender, RoutedEventArgs e)
+		{
+			Log.Info("CamerasPage.HandleHelpButtonClick");
+			Frame.Navigate(typeof(HelpPage), null, new DrillInNavigationTransitionInfo());
+		}
+
+		/// <summary>
+		/// Displays the log files page.
+		/// </summary>
+		private void HandleLogFilesButtonClick(object sender, RoutedEventArgs e)
+		{
+			Log.Info("CamerasPage.HandleLogFilesButtonClick");
+			Frame.Navigate(typeof(LogFilesPage), null, new DrillInNavigationTransitionInfo());
+		}
+
+		/// <summary>
+		/// Displays the about page.
+		/// </summary>
+		private void HandleAboutButtonClick(object sender, RoutedEventArgs e)
+		{
+			Log.Info("CamerasPage.HandleAboutButtonClick");
+			Frame.Navigate(typeof(AboutPage), null, new DrillInNavigationTransitionInfo());
 		}
 
 		/// <summary>
@@ -148,6 +167,7 @@ namespace RPiCameraViewer
 		private void HandleItemClick(object sender, ItemClickEventArgs e)
 		{
 			Camera camera = e.ClickedItem as Camera;
+			Log.Info("CamerasPage.HandleItemClick: {0}", camera.Name);
 			Frame.Navigate(typeof(VideoPage), camera, new DrillInNavigationTransitionInfo());
 		}
 	}

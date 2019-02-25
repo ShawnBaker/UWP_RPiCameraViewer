@@ -21,13 +21,15 @@ namespace RPiCameraViewer
 		public CameraPage()
 		{
 			InitializeComponent();
+			Loaded += HandleLoaded;
 		}
 
 		/// <summary>
-		/// Initializes the controls.
+		/// Gets the camera parameter.
 		/// </summary>
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
+			Log.Info("+CameraPage.OnNavigatedTo");
 			base.OnNavigatedTo(e);
 
 			// get the camera
@@ -37,25 +39,29 @@ namespace RPiCameraViewer
 			{
 				camera = new Camera(Utils.GetNetworkName(), settings.CameraName + " ?", Utils.GetBaseIpAddress(), Settings.DEFAULT_PORT);
 			}
+			Log.Info("-CameraPage.OnNavigatedTo");
+		}
 
-			// set the controls
+		/// <summary>
+		/// Initializes the controls.
+		/// </summary>
+		private void HandleLoaded(object sender, RoutedEventArgs e)
+		{
+			// set the control values
+			Log.Info("+CameraPage.HandleLoaded");
 			titleTextBlock.Text = newCamera ? Res.Str.NewCamera : Res.Str.EditCamera;
 			networkTextBlock.Text = camera.Network;
 			nameTextBox.Text = camera.Name;
 			addressTextBox.Text = camera.Address;
 			portTextBox.Text = camera.Port.ToString();
-		}
 
-		/// <summary>
-		/// Set the focus.
-		/// </summary>
-		private void HandlePageLoaded(object sender, RoutedEventArgs e)
-		{
+			// set the focus
+			nameTextBox.Focus(FocusState.Programmatic);
 			if (newCamera)
 			{
-				nameTextBox.Focus(FocusState.Programmatic);
 				nameTextBox.Select(nameTextBox.Text.Length, 0);
 			}
+			Log.Info("-CameraPage.HandleLoaded");
 		}
 
 		/// <summary>
@@ -64,6 +70,7 @@ namespace RPiCameraViewer
 		private void HandleSaveButtonClick(object sender, RoutedEventArgs e)
 		{
 			// get the camera name
+			Log.Info("+CameraPage.HandleSaveButtonClick");
 			string name = nameTextBox.Text.Trim();
 			if (name.Length == 0)
 			{
@@ -113,6 +120,7 @@ namespace RPiCameraViewer
 			}
 
 			// update the cameras
+			Log.Info("CameraPage.HandleSaveButtonClick: {0} {1} {2}", name, address, port);
 			if (newCamera)
 			{
 				camera.Name = name;
@@ -131,6 +139,7 @@ namespace RPiCameraViewer
 
 			// return to the previous page
 			Frame.GoBack();
+			Log.Info("-CameraPage.HandleSaveButtonClick");
 		}
 
 		/// <summary>
@@ -138,6 +147,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleCancelButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("CameraPage.HandleCancelButtonClick");
 			Frame.GoBack();
 		}
 	}

@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="RPiCameraViewer.LogFilesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RPiCameraViewer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<CommandBar Grid.Row="0" OverflowButtonVisibility="Collapsed">
+			<CommandBar.Content>
+				<TextBlock x:Uid="LogFilesPage" Margin="16,8,0,0" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center"/>
+			</CommandBar.Content>
+			<AppBarButton Icon="Back" Click="HandleBackButtonClick" />
+		</CommandBar>
+		<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16,16,16,0">
+			<ToggleButton x:Name="file1Button" x:Uid="File1" Click="HandleFile1ButtonClick"/>
+			<ToggleButton x:Name="file2Button" x:Uid="File2" Margin="8,0,0,0" Click="HandleFile2ButtonClick"/>
+			<Button x:Name="clearButton" x:Uid="Clear" Margin="8,0,0,0" Click="HandleClearButtonClick"/>
+			<Button x:Name="emailButton" x:Uid="Email" Margin="8,0,0,0" Click="HandleEmailButtonClick"/>
+		</StackPanel>
+		<ScrollViewer x:Name="scrollViewer" Grid.Row="2" Margin="16" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+			<TextBlock x:Name="linesTextBlock" FontSize="12" TextWrapping="NoWrap" HorizontalAlignment="Left"/>
+		</ScrollViewer>
+	</Grid>
+</Page>

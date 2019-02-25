@@ -35,8 +35,16 @@ namespace RPiCameraViewer
 		{
 			InitializeComponent();
 			this.settings = settings;
+			Loaded += HandleLoaded;
+		}
 
+		/// <summary>
+		/// Initializes the controls.
+		/// </summary>
+		private void HandleLoaded(object sender, RoutedEventArgs e)
+		{
 			// initialize the controls
+			Log.Info("+ScannerContentDialog.HandleLoaded");
 			portTextBlock.Text = string.Format(Res.Str.ScanningOnPort, settings.Port);
 			statusTextBlock.Text = string.Format(Res.Str.NewCamerasFound, 0);
 			progressBar.Value = 0;
@@ -46,6 +54,7 @@ namespace RPiCameraViewer
 
 			// launch the main thread
 			Task.Run(ScanAsync);
+			Log.Info("-ScannerContentDialog.HandleLoaded");
 		}
 
 		/// <summary>
@@ -53,6 +62,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleCancelButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("ScannerContentDialog.HandleCancelButtonClick");
 			if (isCancelled || numDone >= LAST_DEVICE)
 			{
 				Hide();
@@ -69,6 +79,7 @@ namespace RPiCameraViewer
 		private async Task ScanAsync()
 		{
 			// get the network info
+			Log.Info("+ScannerContentDialog.ScanAsync");
 			network = Utils.GetNetworkName();
 			baseAddress = Utils.GetBaseIpAddress();
 			string ipAddress = Utils.GetLocalIpAddress();
@@ -81,6 +92,7 @@ namespace RPiCameraViewer
 					int.TryParse(ipAddress.Substring(i + 1), out thisDevice);
 				}
 			}
+			Log.Info("ScannerContentDialog.ScanAsync: {0} {1} {2} {3}", network, baseAddress, thisDevice, settings.ToString());
 
 			// initialize the scan state
 			device = 0;
@@ -88,11 +100,11 @@ namespace RPiCameraViewer
 			cameras = Utils.GetNetworkCameras(network, false);
 			newCameras = new Cameras();
 			isCancelled = false;
-			//Log.info("onPreExecute: " + network + "," + ipAddress + "," + settings.toString());
 
 			// create and start the threads
 			for (int t = 0; t < NUM_THREADS; t++)
 			{
+				Log.Info("ScannerContentDialog.ScanAsync: starting thread {0}", t);
 				Task task = Task.Run(CheckDeviceConnectionsAsync);
 			}
 
@@ -118,6 +130,7 @@ namespace RPiCameraViewer
 					Hide();
 				});
 			}
+			Log.Info("-ScannerContentDialog.ScanAsync");
 		}
 
 		/// <summary>
@@ -136,6 +149,7 @@ namespace RPiCameraViewer
 					try
 					{
 						// try to connect to the device
+						Log.Info("ScannerContentDialog.CheckDeviceConnectionsAsync: connecting to {0}", address);
 						StreamSocket socket = new StreamSocket();
 						HostName hostName = new HostName(address);
 						CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -143,10 +157,14 @@ namespace RPiCameraViewer
 						await socket.ConnectAsync(hostName, settings.Port.ToString()).AsTask(tokenSource.Token);
 
 						// if we get here, we found a new camera
+						Log.Info("ScannerContentDialog.CheckDeviceConnectionsAsync: adding {0}", address);
 						Camera camera = new Camera(network, "", address, settings.Port);
 						AddCamera(camera);
 					}
-					catch { }
+					catch (Exception ex)
+					{
+						Log.Error("ScannerContentDialog.CheckDeviceConnectionsAsync: {0}", ex.Message);
+					}
 				}
 
 				// update the status
@@ -160,7 +178,7 @@ namespace RPiCameraViewer
 		private async void AddCamerasAsync()
 		{
 			// sort the new cameras by IP address
-			//Log.info("addCameras");
+			Log.Info("+ScannerContentDialog.AddCamerasAsync");
 			newCameras.SortByAddress();
 
 			// get the highest number from the existing camera names
@@ -173,10 +191,11 @@ namespace RPiCameraViewer
 				{
 					camera.Name = settings.CameraName + " " + ++highest;
 					settings.Cameras.Add(camera);
-					//Log.info("camera: " + camera.toString());
+					Log.Info("ScannerContentDialog.AddCamerasAsync: {0}", camera.ToString());
 				}
 				settings.Save();
 			});
+			Log.Info("-ScannerContentDialog.AddCamerasAsync");
 		}
 
 		/// <summary>
@@ -198,7 +217,7 @@ namespace RPiCameraViewer
 				}
 				if (!found)
 				{
-					//Log.info("addCamera: " + newCamera.toString());
+					Log.Info("ScannerContentDialog.AddCamera: " + newCamera.ToString());
 					newCameras.Add(newCamera);
 				}
 			}

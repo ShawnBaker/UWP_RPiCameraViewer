@@ -11,18 +11,27 @@ namespace RPiCameraViewer
     public sealed partial class HelpPage : Page
     {
 		/// <summary>
-		/// Constructor - Initializes the controls.
+		/// Constructor - Initializes the page.
 		/// </summary>
 		public HelpPage()
         {
             InitializeComponent();
+			Loaded += HandleLoaded;
+		}
 
+		/// <summary>
+		/// Initializes the controls.
+		/// </summary>
+		private void HandleLoaded(object sender, RoutedEventArgs e)
+		{
 			// set the help text
+			Log.Info("+HelpPage.HandleLoaded");
 			var links = new Dictionary<string, string>
 			{
 				{ Res.Str.StreamingArticleText, Res.Str.StreamingArticleLink }
 			};
 			Utils.CreateInlines(helpTextBlock, Res.Str.HelpMessage, links);
+			Log.Info("-HelpPage.HandleLoaded");
 		}
 
 		/// <summary>
@@ -30,6 +39,7 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleBackButtonClick(object sender, RoutedEventArgs e)
 		{
+			Log.Info("HelpPage.HandleBackButtonClick");
 			Frame.GoBack();
 		}
 	}

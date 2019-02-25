@@ -25,9 +25,10 @@
 			</AppBarButton>
 			<AppBarButton Icon="Refresh" x:Uid="Scan" Click="HandleScanButtonClick" />
 			<CommandBar.SecondaryCommands>
-				<AppBarButton Icon="Help" x:Uid="Help" Click="HandleHelpButtonClick" />
-				<AppBarButton Icon="Contact" x:Uid="About" Click="HandleAboutButtonClick" />
 				<AppBarButton Icon="Setting" x:Uid="Settings" Click="HandleSettingsButtonClick" />
+				<AppBarButton Icon="Help" x:Uid="Help" Click="HandleHelpButtonClick" />
+				<AppBarButton Icon="OpenFile" x:Uid="LogFiles" Click="HandleLogFilesButtonClick" />
+				<AppBarButton Icon="Contact" x:Uid="About" Click="HandleAboutButtonClick" />
 			</CommandBar.SecondaryCommands>
 		</CommandBar>
 		<ListView Grid.Row="1" x:Name="camerasListView" IsItemClickEnabled="True" ItemClick="HandleItemClick">
