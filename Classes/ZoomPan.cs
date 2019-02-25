@@ -1,6 +1,5 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
 using System;
-using System.Diagnostics;
 using Windows.Foundation;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -17,11 +16,9 @@ namespace RPiCameraViewer
 		private ScaleTransform scaleTransform;
 		private TranslateTransform translateTransform;
 		private bool isEnabled = false;
-		private bool isCaptured = false;
 		private Size videoSize = Size.Empty;
 		private Size fitSize = Size.Empty;
 		private Point pan = new Point(0, 0);
-		private Point panStart, panOrigin;
 		private double zoom = 1;
 		private double minZoom = 1;
 		private double maxZoom = 10;
@@ -48,11 +45,11 @@ namespace RPiCameraViewer
 			mediaElement.SizeChanged += HandleMediaSizeChanged;
 			mediaElement.CurrentStateChanged += HandleMediaCurrentStateChanged;
 			mediaElement.PointerWheelChanged += HandleMediaPointerWheelChanged;
-			mediaElement.PointerPressed += HandleMediaPointerPressed;
-			mediaElement.PointerReleased += HandleMediaPointerReleased;
-			mediaElement.PointerMoved += HandleMediaPointerMoved;
-			mediaElement.DoubleTapped += MediaElement_DoubleTapped;
+			mediaElement.DoubleTapped += HandleMediaDoubleTapped;
 			mediaElement.IsDoubleTapEnabled = true;
+			mediaElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateX |
+                                            ManipulationModes.TranslateY;
+			mediaElement.ManipulationDelta += HandleMediaManipulationDelta;
 		}
 
 		/// <summary>
@@ -90,66 +87,38 @@ namespace RPiCameraViewer
 					double diff = (newZoom / zoom) - 1;
 					Point offset = new Point(point.Position.X - mediaElement.ActualWidth / 2 + pan.X,
 											 point.Position.Y - mediaElement.ActualHeight / 2 + pan.Y);
-					//Debug.WriteLine("Wheel: {0} {1} {2} {3} {4}", zoom, newZoom, diff, offset, pan);
+					//Log.Verbose("Wheel: {0} {1} {2} {3} {4}", zoom, newZoom, diff, offset, pan);
 					SetZoomPan(newZoom, pan.X - offset.X * diff, pan.Y - offset.Y * diff);
 				}
 			}
 		}
 
 		/// <summary>
-		/// Starts panning.
-		/// </summary>
-		private void HandleMediaPointerPressed(object sender, PointerRoutedEventArgs e)
-		{
-			if (isEnabled)
-			{
-				PointerPoint point = e.GetCurrentPoint(null);
-				if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse || point.Properties.IsLeftButtonPressed)
-				{
-					panStart = pan;
-					panOrigin = point.Position;
-					isCaptured = mediaElement.CapturePointer(e.Pointer);
-					e.Handled = true;
-					//Debug.WriteLine("Pressed: {0} {1} {2} {3} {4}", panStart, panOrigin, isCaptured, zoom, pan);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Ends panning.
-		/// </summary>
-		private void HandleMediaPointerReleased(object sender, PointerRoutedEventArgs e)
-		{
-			if (isCaptured)
-			{
-				mediaElement.ReleasePointerCapture(e.Pointer);
-				isCaptured = false;
-				e.Handled = true;
-			}
-		}
-
-		/// <summary>
-		/// Pans the view.
-		/// </summary>
-		private void HandleMediaPointerMoved(object sender, PointerRoutedEventArgs e)
-		{
-			if (isCaptured)
-			{
-				PointerPoint point = e.GetCurrentPoint(null);
-				Point distance = new Point((point.Position.X - panOrigin.X) / zoom, (point.Position.Y - panOrigin.Y) / zoom);
-				SetPan(panStart.X + distance.X, panStart.Y + distance.Y);
-				//Debug.WriteLine("Moved: {0} {1} {2} {3}", distance, point.Position, zoom, pan);
-				e.Handled = true;
-			}
-		}
-
-		/// <summary>
 		/// Sets the zoom back to 1.
 		/// </summary>
-		private void MediaElement_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+		private void HandleMediaDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
 		{
 			SetZoomPan(1, 0, 0);
 		}
+
+        /// <summary>
+        /// Sets the zoom and pan.
+        /// </summary>
+		private void HandleMediaManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+		{
+            //Log.Verbose("Delta: {0} {1}", e.Delta.Scale, e.Delta.Translation);
+            if (isEnabled)
+            {
+                double newZoom = zoom * e.Delta.Scale;
+                newZoom = Math.Max(minZoom, Math.Min(newZoom, maxZoom));
+                double diff = (newZoom / zoom) - 1;
+                Point offset = new Point(e.Position.X - mediaElement.ActualWidth / 2 + pan.X,
+                                            e.Position.Y - mediaElement.ActualHeight / 2 + pan.Y);
+                //Log.Verbose("Pinch: {0} {1} {2} {3} {4}", zoom, newZoom, diff, offset, pan);
+                SetZoomPan(newZoom, pan.X + e.Delta.Translation.X / zoom - offset.X * diff,
+                                    pan.Y + e.Delta.Translation.Y / zoom - offset.Y * diff);
+            }
+        }
 
 		/// <summary>
 		/// Resets the zoom/pan based on the video and control size.
@@ -253,9 +222,9 @@ namespace RPiCameraViewer
 			if (isEnabled)
 			{
 				Point maxPan = GetMaxPan();
-				//Debug.WriteLine("MaxPan: {0}", maxPan);
+                //Log.Verbose("MaxPan: {0}", maxPan);
 
-				if (maxPan.X == 0) pan.X = 0;
+                if (maxPan.X == 0) pan.X = 0;
 				else if (pan.X < -maxPan.X) pan.X = -maxPan.X;
 				else if (pan.X > maxPan.X) pan.X = maxPan.X;
 
