@@ -1,7 +1,6 @@
 ﻿// Copyright © 2019 Shawn Baker using the MIT License.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
@@ -219,7 +218,6 @@ namespace RPiCameraViewer
 					catch (Exception ex)
 					{
 						Log.Error("VideoPage.HandleSnapshotButtonClick EXCEPTION2: {0}", ex.Message);
-						Debug.WriteLine("EXCEPTION: {0}", ex.ToString());
 						await Utils.PlaySoundAsync("error");
 					}
 				}
@@ -257,12 +255,12 @@ namespace RPiCameraViewer
 				while (!isCancelled)
 				{
 					uint len = await reader.LoadAsync(BUFFER_SIZE);
-					Log.Verbose("numBytes = {0}", len);
+					//Log.Verbose("numBytes = {0}", len);
 					if (nal == null)
 					{
 						lock (availableNals)
 						{
-							Log.Verbose("availableNals.Dequeue: {0}", availableNals.Count);
+							//Log.Verbose("availableNals.Dequeue: {0}", availableNals.Count);
 							nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
 						}
 					}
@@ -310,7 +308,7 @@ namespace RPiCameraViewer
 											{
 												lock (availableNals)
 												{
-													Log.Verbose("availableNals.Dequeue: {0}", availableNals.Count);
+													//Log.Verbose("availableNals.Dequeue: {0}", availableNals.Count);
 													nal = (availableNals.Count > 0) ? availableNals.Dequeue() : null;
 												}
 											}
@@ -326,7 +324,7 @@ namespace RPiCameraViewer
 										}
 										else
 										{
-											Log.Verbose("null");
+											//Log.Verbose("null");
 										}
 									}
 									gotHeader = true;
@@ -377,7 +375,7 @@ namespace RPiCameraViewer
 				nal.Buffer.CopyTo(0, header, 0, 5);
 				nalType = (header[0] == 0 && header[1] == 0 && header[2] == 0 && header[3] == 1) ? (header[4] & 0x1F) : -1;
 			}
-			Log.Verbose("NAL: type = {0}, len = {1}", nalType, nal.Buffer.Length);
+			//Log.Verbose("NAL: type = {0}, len = {1}", nalType, nal.Buffer.Length);
 
 			// process the first SPS record we encounter
 			if (nalType == 7 && !decoding)
@@ -385,7 +383,7 @@ namespace RPiCameraViewer
 				byte[] sps = new byte[nal.Buffer.Length];
 				nal.Buffer.CopyTo(sps);
 				SpsParser parser = new SpsParser(sps, (int)nal.Buffer.Length);
-				Log.Verbose("SPS: {0}x{1} @ {2}", parser.width, parser.height, parser.fps);
+				//Log.Verbose("SPS: {0}x{1} @ {2}", parser.width, parser.height, parser.fps);
 
 				VideoEncodingProperties properties = VideoEncodingProperties.CreateH264();
 				properties.ProfileId = H264ProfileIds.High;
@@ -418,17 +416,17 @@ namespace RPiCameraViewer
 					request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0));
 					lock (availableNals)
 					{
-						Log.Verbose("availableNals.Enqueue");
+						//Log.Verbose("availableNals.Enqueue");
 						availableNals.Enqueue(nal);
 					}
 					deferral.Complete();
 					deferral = null;
 					request = null;
-					Log.Verbose("Deferral Complete");
+					//Log.Verbose("Deferral Complete");
 				}
 				else
 				{
-					Log.Verbose("usedNals.Enqueue");
+					//Log.Verbose("usedNals.Enqueue");
 					lock (usedNals)
 					{
 						usedNals.Enqueue(nal);
@@ -445,11 +443,11 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleSampleRequested(MediaStreamSource sender, MediaStreamSourceSampleRequestedEventArgs args)
 		{
-			Log.Verbose("HandleSampleRequested");
+			//Log.Verbose("HandleSampleRequested");
 			Nal nal;
 			lock (usedNals)
 			{
-				Log.Verbose("usedNals.Dequeue: {0}", usedNals.Count);
+				//Log.Verbose("usedNals.Dequeue: {0}", usedNals.Count);
 				nal = (usedNals.Count > 0) ? usedNals.Dequeue() : null;
 			}
 			if (nal != null)
@@ -457,13 +455,13 @@ namespace RPiCameraViewer
 				args.Request.Sample = MediaStreamSample.CreateFromBuffer(nal.Buffer, new TimeSpan(0));
 				lock (availableNals)
 				{
-					Log.Verbose("availableNals.Enqueue");
+					//Log.Verbose("availableNals.Enqueue");
 					availableNals.Enqueue(nal);
 				}
 			}
 			else
 			{
-				Log.Verbose("Deferred");
+				//Log.Verbose("Deferred");
 				request = args.Request;
 				deferral = args.Request.GetDeferral();
 			}
