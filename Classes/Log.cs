@@ -173,14 +173,17 @@ namespace RPiCameraViewer
 		/// <param name="args">Arguments for the format string.</param>
 		public static void Write(LogLevel level, string format, params object[] args)
 		{
-			string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-			string lvl = level.ToString();
-			string message = date + "|" + lvl + "|" + string.Format(format, args);
-			lock (messages)
-			{
-				messages.Add(message);
-			}
-			signal.Set();
+            if (level <= Log.level)
+            {
+                string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                string lvl = level.ToString();
+                string message = date + "|" + lvl + "|" + string.Format(format, args);
+                lock (messages)
+                {
+                    messages.Add(message);
+                }
+                signal.Set();
+            }
 		}
 
 		/// <summary>
