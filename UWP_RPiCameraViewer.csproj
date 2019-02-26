@@ -147,7 +147,6 @@
     <Content Include="Assets\chevron\chevron.scale-100.png" />
     <Content Include="Assets\chevron\chevron.scale-125.png" />
     <Content Include="Assets\chevron\chevron.scale-150.png" />
-    <Content Include="Assets\chevron\chevron.scale-175.png" />
     <Content Include="Assets\chevron\chevron.scale-200.png" />
     <Content Include="Assets\chevron\chevron.scale-225.png" />
     <Content Include="Assets\chevron\chevron.scale-300.png" />
@@ -155,7 +154,6 @@
     <Content Include="Assets\chevron\chevron_disabled.scale-100.png" />
     <Content Include="Assets\chevron\chevron_disabled.scale-125.png" />
     <Content Include="Assets\chevron\chevron_disabled.scale-150.png" />
-    <Content Include="Assets\chevron\chevron_disabled.scale-175.png" />
     <Content Include="Assets\chevron\chevron_disabled.scale-200.png" />
     <Content Include="Assets\chevron\chevron_disabled.scale-225.png" />
     <Content Include="Assets\chevron\chevron_disabled.scale-300.png" />
@@ -163,7 +161,6 @@
     <Content Include="Assets\chevron\chevron_pressed.scale-100.png" />
     <Content Include="Assets\chevron\chevron_pressed.scale-125.png" />
     <Content Include="Assets\chevron\chevron_pressed.scale-150.png" />
-    <Content Include="Assets\chevron\chevron_pressed.scale-175.png" />
     <Content Include="Assets\chevron\chevron_pressed.scale-200.png" />
     <Content Include="Assets\chevron\chevron_pressed.scale-225.png" />
     <Content Include="Assets\chevron\chevron_pressed.scale-300.png" />
@@ -171,7 +168,6 @@
     <Content Include="Assets\close_button\close_button.scale-100.png" />
     <Content Include="Assets\close_button\close_button.scale-125.png" />
     <Content Include="Assets\close_button\close_button.scale-150.png" />
-    <Content Include="Assets\close_button\close_button.scale-175.png" />
     <Content Include="Assets\close_button\close_button.scale-200.png" />
     <Content Include="Assets\close_button\close_button.scale-225.png" />
     <Content Include="Assets\close_button\close_button.scale-300.png" />
@@ -179,7 +175,6 @@
     <Content Include="Assets\close_button\close_disabled_button.scale-100.png" />
     <Content Include="Assets\close_button\close_disabled_button.scale-125.png" />
     <Content Include="Assets\close_button\close_disabled_button.scale-150.png" />
-    <Content Include="Assets\close_button\close_disabled_button.scale-175.png" />
     <Content Include="Assets\close_button\close_disabled_button.scale-200.png" />
     <Content Include="Assets\close_button\close_disabled_button.scale-225.png" />
     <Content Include="Assets\close_button\close_disabled_button.scale-300.png" />
@@ -187,7 +182,6 @@
     <Content Include="Assets\close_button\close_pressed_button.scale-100.png" />
     <Content Include="Assets\close_button\close_pressed_button.scale-125.png" />
     <Content Include="Assets\close_button\close_pressed_button.scale-150.png" />
-    <Content Include="Assets\close_button\close_pressed_button.scale-175.png" />
     <Content Include="Assets\close_button\close_pressed_button.scale-200.png" />
     <Content Include="Assets\close_button\close_pressed_button.scale-225.png" />
     <Content Include="Assets\close_button\close_pressed_button.scale-300.png" />
@@ -205,7 +199,6 @@
     <Content Include="Assets\snapshot_button\snapshot_button.scale-100.png" />
     <Content Include="Assets\snapshot_button\snapshot_button.scale-125.png" />
     <Content Include="Assets\snapshot_button\snapshot_button.scale-150.png" />
-    <Content Include="Assets\snapshot_button\snapshot_button.scale-175.png" />
     <Content Include="Assets\snapshot_button\snapshot_button.scale-200.png" />
     <Content Include="Assets\snapshot_button\snapshot_button.scale-225.png" />
     <Content Include="Assets\snapshot_button\snapshot_button.scale-300.png" />
@@ -213,7 +206,6 @@
     <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-100.png" />
     <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-125.png" />
     <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-150.png" />
-    <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-175.png" />
     <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-200.png" />
     <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-225.png" />
     <Content Include="Assets\snapshot_button\snapshot_disabled_button.scale-300.png" />
@@ -221,7 +213,6 @@
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-100.png" />
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-125.png" />
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-150.png" />
-    <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-175.png" />
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-200.png" />
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-225.png" />
     <Content Include="Assets\snapshot_button\snapshot_pressed_button.scale-300.png" />
@@ -257,7 +248,6 @@
     <Content Include="Assets\trash\trash.scale-100.png" />
     <Content Include="Assets\trash\trash.scale-125.png" />
     <Content Include="Assets\trash\trash.scale-150.png" />
-    <Content Include="Assets\trash\trash.scale-175.png" />
     <Content Include="Assets\trash\trash.scale-200.png" />
     <Content Include="Assets\trash\trash.scale-225.png" />
     <Content Include="Assets\trash\trash.scale-300.png" />
@@ -265,7 +255,6 @@
     <Content Include="Assets\trash\trash_disabled.scale-100.png" />
     <Content Include="Assets\trash\trash_disabled.scale-125.png" />
     <Content Include="Assets\trash\trash_disabled.scale-150.png" />
-    <Content Include="Assets\trash\trash_disabled.scale-175.png" />
     <Content Include="Assets\trash\trash_disabled.scale-200.png" />
     <Content Include="Assets\trash\trash_disabled.scale-225.png" />
     <Content Include="Assets\trash\trash_disabled.scale-300.png" />
@@ -273,7 +262,6 @@
     <Content Include="Assets\trash\trash_pressed.scale-100.png" />
     <Content Include="Assets\trash\trash_pressed.scale-125.png" />
     <Content Include="Assets\trash\trash_pressed.scale-150.png" />
-    <Content Include="Assets\trash\trash_pressed.scale-175.png" />
     <Content Include="Assets\trash\trash_pressed.scale-200.png" />
     <Content Include="Assets\trash\trash_pressed.scale-225.png" />
     <Content Include="Assets\trash\trash_pressed.scale-300.png" />
@@ -343,6 +331,58 @@
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
+    <OutputPath>bin\ARM64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
