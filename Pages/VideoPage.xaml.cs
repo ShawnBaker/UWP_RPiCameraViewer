@@ -36,9 +36,10 @@ namespace RPiCameraViewer
 		// instance variables
 		private Settings settings = new Settings();
 		private Camera camera;
-		private bool isCancelled;
 		private StreamSocket socket;
-		private bool decoding = false;
+		private bool isCancelled = false;
+		private bool isConnected = false;
+		private bool isDecoding = false;
 		private ZoomPan zoomPan;
 		private Storyboard storyboard;
 		private MediaStreamSource streamSource = null;
@@ -163,8 +164,8 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleCloseButtonClick(object sender, RoutedEventArgs e)
 		{
-			Log.Info("VideoPage.HandleCloseButtonClick");
-			if (isCancelled)
+			Log.Info("VideoPage.HandleCloseButtonClick: {0} {1}", isCancelled, isConnected);
+			if (isCancelled || !isConnected)
 			{
 				Frame.GoBack();
 			}
@@ -260,7 +261,6 @@ namespace RPiCameraViewer
 			int numZeroes = 0;
 			int numReadErrors = 0;
 			bool gotHeader = false;
-			bool connected = false;
 
 			// look for a TCP/IP connection
 			try
@@ -273,7 +273,7 @@ namespace RPiCameraViewer
 				await socket.ConnectAsync(hostName, camera.Port.ToString()).AsTask(tokenSource.Token);
 
 				// if we get here, we opened the socket
-				connected = true;
+				isConnected = true;
 				DataReader reader = new DataReader(socket.InputStream);
 				reader.InputStreamOptions = InputStreamOptions.Partial;
 
@@ -370,7 +370,8 @@ namespace RPiCameraViewer
 				}
 				reader.Dispose();
 				socket.Dispose();
-				decoding = false;
+				isDecoding = false;
+				isConnected = false;
 				await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
 				{
 					media.Stop();
@@ -379,7 +380,8 @@ namespace RPiCameraViewer
 			}
 			catch (Exception ex)
 			{
-				DisplayStatusMessage(connected ? Res.Error.LostConnection : Res.Error.CouldntConnect);
+				isConnected = false;
+				DisplayStatusMessage(isConnected ? Res.Error.LostConnection : Res.Error.CouldntConnect);
 				Log.Error("EXCEPTION: {0}", ex.ToString());
 				return;
 			}
@@ -404,7 +406,7 @@ namespace RPiCameraViewer
 			//Log.Verbose("NAL: type = {0}, len = {1}", nalType, nal.Buffer.Length);
 
 			// process the first SPS record we encounter
-			if (nalType == 7 && !decoding)
+			if (nalType == 7 && !isDecoding)
 			{
 				byte[] sps = new byte[nal.Buffer.Length];
 				nal.Buffer.CopyTo(sps);
@@ -429,11 +431,11 @@ namespace RPiCameraViewer
 					media.Play();
 					storyboard.Begin();
 				});
-				decoding = true;
+				isDecoding = true;
 			}
 
 			// queue the frame
-			if (nalType > 0 && decoding)
+			if (nalType > 0 && isDecoding)
 			{
 				if (deferral != null)
 				{
@@ -459,7 +461,7 @@ namespace RPiCameraViewer
 			}
 
 			// return the NAL type
-			return decoding ? nalType : -1;
+			return isDecoding ? nalType : -1;
 		}
 
 		/// <summary>
