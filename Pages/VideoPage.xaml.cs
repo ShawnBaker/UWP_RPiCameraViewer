@@ -380,9 +380,9 @@ namespace RPiCameraViewer
 			}
 			catch (Exception ex)
 			{
-				isConnected = false;
 				DisplayStatusMessage(isConnected ? Res.Error.LostConnection : Res.Error.CouldntConnect);
 				Log.Error("EXCEPTION: {0}", ex.ToString());
+				isConnected = false;
 				return;
 			}
 			Log.Info("-VideoPage.ReadSocketAsync");
