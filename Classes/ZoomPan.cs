@@ -49,6 +49,7 @@ namespace RPiCameraViewer
 			mediaElement.IsDoubleTapEnabled = true;
 			mediaElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateX |
                                             ManipulationModes.TranslateY;
+			mediaElement.ManipulationStarted += HandleMediaManipulationStarted;
 			mediaElement.ManipulationDelta += HandleMediaManipulationDelta;
 		}
 
@@ -101,24 +102,40 @@ namespace RPiCameraViewer
 			SetZoomPan(1, 0, 0);
 		}
 
-        /// <summary>
-        /// Sets the zoom and pan.
-        /// </summary>
+		/// <summary>
+		/// Starts a zoom/pan manipulation.
+		/// </summary>
+		private void HandleMediaManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+		{
+			HandleDelta("Start", e.Cumulative, e.Position);
+		}
+
+		/// <summary>
+		/// Continues a zoom/pan manipulation.
+		/// </summary>
 		private void HandleMediaManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
 		{
-            //Log.Verbose("Delta: {0} {1}", e.Delta.Scale, e.Delta.Translation);
-            if (isEnabled)
-            {
-                double newZoom = zoom * e.Delta.Scale;
-                newZoom = Math.Max(minZoom, Math.Min(newZoom, maxZoom));
-                double diff = (newZoom / zoom) - 1;
-                Point offset = new Point(e.Position.X - mediaElement.ActualWidth / 2 + pan.X,
-                                            e.Position.Y - mediaElement.ActualHeight / 2 + pan.Y);
-                //Log.Verbose("Pinch: {0} {1} {2} {3} {4}", zoom, newZoom, diff, offset, pan);
-                SetZoomPan(newZoom, pan.X + e.Delta.Translation.X / zoom - offset.X * diff,
-                                    pan.Y + e.Delta.Translation.Y / zoom - offset.Y * diff);
-            }
-        }
+			HandleDelta("Delta", e.Delta, e.Position);
+		}
+
+		/// <summary>
+		/// Handles a zoom/pan manipulation.
+		/// </summary>
+		private void HandleDelta(string name, ManipulationDelta delta, Point position)
+		{
+			Log.Info("{0}: {1} {2} {3}", name, delta.Scale, delta.Translation, position);
+			if (isEnabled)
+			{
+				double newZoom = zoom * delta.Scale;
+				newZoom = Math.Max(minZoom, Math.Min(newZoom, maxZoom));
+				double diff = (newZoom / zoom) - 1;
+				Point offset = new Point(position.X - mediaElement.ActualWidth / 2 + pan.X,
+										 position.Y - mediaElement.ActualHeight / 2 + pan.Y);
+				//Log.Verbose("HandleDelta: {0} {1} {2} {3} {4}", zoom, newZoom, diff, offset, pan);
+				SetZoomPan(newZoom, pan.X + delta.Translation.X / zoom - offset.X * diff,
+									pan.Y + delta.Translation.Y / zoom - offset.Y * diff);
+			}
+		}
 
 		/// <summary>
 		/// Resets the zoom/pan based on the video and control size.
