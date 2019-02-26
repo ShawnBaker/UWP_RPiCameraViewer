@@ -3,8 +3,8 @@
   <Identity Name="e3ea2729-ccf6-4a47-9e85-5007c0f60f98" Publisher="CN=shawn" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="e3ea2729-ccf6-4a47-9e85-5007c0f60f98" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>UWP_RPiCameraViewer</DisplayName>
-    <PublisherDisplayName>shawn</PublisherDisplayName>
+    <DisplayName>RPi Camera Viewer</DisplayName>
+    <PublisherDisplayName>Frozen North Computing</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -15,8 +15,13 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="RPiCameraViewer.App">
-      <uap:VisualElements DisplayName="RPiCameraViewer" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="RPiCameraViewer" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
+      <uap:VisualElements DisplayName="RPi Camera Viewer" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Plays a raw H.264 stream from a Raspberry Pi." BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png" ShortName="RPi Camera Viewer">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
