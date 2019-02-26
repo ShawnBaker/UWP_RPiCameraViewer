@@ -14,7 +14,9 @@ namespace RPiCameraViewer
 			public static string BadAddress => res.GetString("ErrorBadAddress");
 			public static string BadPort => res.GetString("ErrorBadPort");
 			public static string BadScanTimeout => res.GetString("ErrorBadScanTimeout");
+			public static string CouldntConnect => res.GetString("ErrorCouldntConnect");
 			public static string CouldntCreateZipFile => res.GetString("CouldntCreateZipFile");
+			public static string LostConnection => res.GetString("ErrorLostConnection");
 			public static string NameAlreadyExists => res.GetString("ErrorNameAlreadyExists");
 			public static string NoAddress => res.GetString("ErrorNoAddress");
 			public static string NoCameraName => res.GetString("ErrorNoCameraName");
@@ -29,6 +31,7 @@ namespace RPiCameraViewer
 			public static string AutisticLucarioLink => res.GetString("AutisticLucarioLink");
 			public static string AutisticLucarioText => res.GetString("AutisticLucarioText");
 			public static string Cancel => res.GetString("Cancel");
+			public static string ClosingVideo => res.GetString("ClosingVideo");
 			public static string Copyright => res.GetString("Copyright");
 			public static string Done => res.GetString("Done");
 			public static string EditCamera => res.GetString("EditCamera");
@@ -37,6 +40,7 @@ namespace RPiCameraViewer
 			public static string GithubLink => res.GetString("GithubLink");
 			public static string GithubText => res.GetString("GithubText");
 			public static string HelpMessage => res.GetString("HelpMessage");
+			public static string InitializingVideo => res.GetString("InitializingVideo");
 			public static string LogFiles => res.GetString("LogFilesSubject");
 			public static string MartinBerubeLink => res.GetString("MartinBerubeLink");
 			public static string MartinBerubeText => res.GetString("MartinBerubeText");

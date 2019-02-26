@@ -347,4 +347,16 @@ It's available on {4} under the {5} License.</value>
   <data name="CouldntCreateZipFile" xml:space="preserve">
     <value>Unable to create a ZIP file from the log files.</value>
   </data>
+  <data name="ClosingVideo" xml:space="preserve">
+    <value>Closing video connection...</value>
+  </data>
+  <data name="ErrorCouldntConnect" xml:space="preserve">
+    <value>Couldn't connect to the camera.</value>
+  </data>
+  <data name="ErrorLostConnection" xml:space="preserve">
+    <value>Lost the connection to the camera.</value>
+  </data>
+  <data name="InitializingVideo" xml:space="preserve">
+    <value>Initializing video...</value>
+  </data>
 </root>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using UWP_Components;
 using Windows.Graphics.Imaging;
 using Windows.Media.Core;
 using Windows.Media.MediaProperties;
@@ -15,9 +16,9 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using UWP_Components;
 
 namespace RPiCameraViewer
 {
@@ -73,8 +74,12 @@ namespace RPiCameraViewer
 		/// </summary>
 		private void HandleLoaded(object sender, RoutedEventArgs e)
 		{
-			// display the camera name
+			// set the status message color
 			Log.Info("+VideoPage.HandleLoaded: {0}", camera.ToString());
+			statusTextBlock.Foreground = new SolidColorBrush(Utils.GoodColor);
+			statusTextBlock.Text = Res.Str.InitializingVideo;
+
+			// display the camera name
 			nameTextBlock.Text = camera.Name;
 
 			// configure the media element
@@ -139,6 +144,21 @@ namespace RPiCameraViewer
 		}
 
 		/// <summary>
+		/// Displays a status message.
+		/// </summary>
+		/// <param name="message">Message to be displayed.</param>
+		private void DisplayStatusMessage(string message)
+		{
+			Log.Error(message);
+			var action = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+			{
+				statusTextBlock.Text = message;
+				statusTextBlock.Foreground = new SolidColorBrush(Utils.BadColor);
+				statusTextBlock.Visibility = Visibility.Visible;
+			});
+		}
+
+		/// <summary>
 		/// Closes the video page.
 		/// </summary>
 		private void HandleCloseButtonClick(object sender, RoutedEventArgs e)
@@ -150,6 +170,9 @@ namespace RPiCameraViewer
 			}
 			else
 			{
+				statusTextBlock.Text = Res.Str.ClosingVideo;
+				statusTextBlock.Foreground = new SolidColorBrush(Utils.GoodColor);
+				statusTextBlock.Visibility = Visibility.Visible;
 				isCancelled = true;
 			}
 		}
@@ -237,6 +260,7 @@ namespace RPiCameraViewer
 			int numZeroes = 0;
 			int numReadErrors = 0;
 			bool gotHeader = false;
+			bool connected = false;
 
 			// look for a TCP/IP connection
 			try
@@ -249,6 +273,7 @@ namespace RPiCameraViewer
 				await socket.ConnectAsync(hostName, camera.Port.ToString()).AsTask(tokenSource.Token);
 
 				// if we get here, we opened the socket
+				connected = true;
 				DataReader reader = new DataReader(socket.InputStream);
 				reader.InputStreamOptions = InputStreamOptions.Partial;
 
@@ -338,7 +363,7 @@ namespace RPiCameraViewer
 						numReadErrors++;
 						if (numReadErrors >= MAX_READ_ERRORS)
 						{
-							//setMessage(R.string.error_lost_connection);
+							DisplayStatusMessage(Res.Error.LostConnection);
 							break;
 						}
 					}
@@ -354,6 +379,7 @@ namespace RPiCameraViewer
 			}
 			catch (Exception ex)
 			{
+				DisplayStatusMessage(connected ? Res.Error.LostConnection : Res.Error.CouldntConnect);
 				Log.Error("EXCEPTION: {0}", ex.ToString());
 				return;
 			}
@@ -389,9 +415,6 @@ namespace RPiCameraViewer
 				properties.ProfileId = H264ProfileIds.High;
 				properties.Width = (uint)parser.width;
 				properties.Height = (uint)parser.height;
-				//properties.Bitrate = (uint)parser.bitrate;
-				//properties.Bitrate = 1000000;
-				//properties.FrameRate = parser.fps;
 
 				streamSource = new MediaStreamSource(new VideoStreamDescriptor(properties));
 				streamSource.BufferTime = TimeSpan.Zero;
@@ -399,8 +422,9 @@ namespace RPiCameraViewer
 				streamSource.Duration = TimeSpan.Zero;
 				streamSource.SampleRequested += HandleSampleRequested;
 
-				Windows.Foundation.IAsyncAction action = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
+				var action = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
 				{
+					statusTextBlock.Visibility = Visibility.Collapsed;
 					media.SetMediaStreamSource(streamSource);
 					media.Play();
 					storyboard.Begin();

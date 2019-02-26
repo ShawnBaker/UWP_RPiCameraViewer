@@ -23,8 +23,10 @@
 							  PressedStateImageSource="/Assets/snapshot_button/snapshot_pressed_button.png"
 							  Opacity="{Binding Opacity, ElementName=closeButton}"
 							  IsEnabled="{Binding IsEnabled, ElementName=closeButton}"/>
-		<TextBlock x:Name="nameTextBlock" Margin="8,0,0,4" Style="{StaticResource SubtitleTextBlockStyle}" FontWeight="Bold" Foreground="Red"
-				   TextWrapping="NoWrap" VerticalAlignment="Bottom" HorizontalAlignment="Left"
-				   Opacity="{Binding Opacity, ElementName=closeButton}"/>
+		<TextBlock x:Name="nameTextBlock" Margin="8,0,0,4" Style="{StaticResource SubtitleTextBlockStyle}"
+				   FontWeight="Bold" Foreground="Red" TextWrapping="NoWrap" VerticalAlignment="Bottom"
+				   HorizontalAlignment="Left" Opacity="{Binding Opacity, ElementName=closeButton}"/>
+		<TextBlock x:Name="statusTextBlock" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="WrapWholeWords"
+				   VerticalAlignment="Center" HorizontalAlignment="Center"/>
 	</Grid>
 </Page>
